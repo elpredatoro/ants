@@ -20,7 +20,7 @@ public class Main extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		setTitle("Ants test v0.1");
+		setTitle("Ants test v0.2");
 		setVisible(true);
 		Core core;
 		add(core = new Core(840, 500));
