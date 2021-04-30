@@ -26,10 +26,14 @@ public class Main extends JFrame {
 		add(core = new Core(840, 500));
 		
 		Timer timer = new Timer();
-		timer.schedule(new TimerHelper(core), 10, 10);
+		timer.schedule(new TimerHelper(core), 1000, 10);
 	}
 	
 	public static void main(String[] args) {
 		new Main();
+	}
+	
+	public static int randomMinMax(int min, int max) {
+		return (min + (int)(Math.random() * ((max - min) + 1)));
 	}
 }
