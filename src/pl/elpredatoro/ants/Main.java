@@ -21,9 +21,9 @@ public class Main extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setTitle("Ants test v0.1");
-		Core core;
-		add(core = new Core());
 		setVisible(true);
+		Core core;
+		add(core = new Core(840, 500));
 		
 		Timer timer = new Timer();
 		timer.schedule(new TimerHelper(core), 10, 10);

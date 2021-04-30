@@ -11,22 +11,26 @@ public class Core extends JComponent {
 	private static final long serialVersionUID = 1L;
 	
 	public int count = 100;
-	public int[] x, y, bounds;
-	public boolean[] move_up, move_left;
+	public int[] bounds;
+	public float[] x, y, x_diff, y_diff;
 
-	public Core() {
-		x = new int[count];
-		y = new int[count];
+	public Core(int xmax, int ymax) {
+		x = new float[count];
+		y = new float[count];
 		bounds = new int[count];
-		move_up = new boolean[count];
-		move_left = new boolean[count];
+		y_diff = new float[count];
+		x_diff = new float[count];
 		
 		for(int v=0; v<count; v++) {
-			x[v] = randomMinMax(10, 200);
-			y[v] = randomMinMax(10, 200);
-			bounds[v] = randomMinMax(5, 10);
-			move_up[v] = (randomMinMax(0, 1)) == 0 ? true : false;
-			move_left[v] = (randomMinMax(0, 1)) == 0 ? true : false;
+			x[v] = randomMinMax(0, xmax);
+			y[v] = randomMinMax(0, ymax);
+			bounds[v] = 2;
+			boolean x_diff_negative = randomMinMax(0, 1) == 1 ? true : false;
+			boolean y_diff_negative = randomMinMax(0, 1) == 1 ? true : false;
+			do {
+				x_diff[v] = (float) (x_diff_negative ? (0 - Math.random()) : (Math.random()));
+				y_diff[v] = (float) (y_diff_negative ? (0 - Math.random()) : (Math.random()));
+			} while(x_diff[v] == 0 && y_diff[v] == 0);
 		}
 	}
 	
@@ -41,7 +45,7 @@ public class Core extends JComponent {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setColor(Color.BLACK);
 			for(int v=0; v<count; v++) {
-				g2d.fillOval(x[v], y[v], bounds[v], bounds[v]);
+				g2d.fillOval((int)x[v], (int)y[v], bounds[v], bounds[v]);
 			}
 			g2d.dispose();
 

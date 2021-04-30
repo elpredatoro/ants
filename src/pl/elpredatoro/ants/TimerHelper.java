@@ -15,37 +15,23 @@ public class TimerHelper extends TimerTask {
 	public void run() {
 		//int v = 0;
 		for(int v=0; v<core.count; v++) {
-			if (core.x[v] > core.getWidth() - core.bounds[v]) {
-				core.move_left[v] = true;
+			if (core.x[v] > core.getWidth() - core.bounds[v] && core.x_diff[v] > 0) {
+				core.x_diff[v] = 0 - core.x_diff[v];
+			}
+			if (core.x[v] < 0 && core.x_diff[v] < 0) {
+				core.x_diff[v] = 0 - core.x_diff[v];
 			}
 			
-			if (core.x[v] < 0) {
-				core.move_left[v] = false;
-			}
-			
-				if (core.move_left[v]) {
-					core.x[v] -= 1;
-				}
+			core.x[v] = core.x[v] + core.x_diff[v];
 				
-				else {
-					core.x[v] += 1;
-				}
-				
-			if (core.y[v] > core.getHeight() - core.bounds[v]) {
-				core.move_up[v] = true;
+			if (core.y[v] > core.getHeight() - core.bounds[v] && core.y_diff[v] > 0) {
+				core.y_diff[v] = 0 - core.y_diff[v];
+			}
+			if (core.y[v] < 0 && core.y_diff[v] < 0) {
+				core.y_diff[v] = 0 - core.y_diff[v];
 			}
 			
-			if (core.y[v] < 0) {
-				core.move_up[v] = false;
-			}
-			
-			if (core.move_up[v]) {
-				core.y[v] -= 1;
-			}
-			
-			else {
-				core.y[v] += 1;
-			}
+			core.y[v] = core.y[v] + core.y_diff[v];
 			
 			//System.out.printf("\nv=%s, x=%s, y=%s, bounds=%s", v, core.x[v], core.y[v], core.bounds[v]);
 			
