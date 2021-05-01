@@ -14,14 +14,14 @@ public class Ants
 		
 	}
 	
-	public void generate(int count, int xmax, int ymax) {
+	public void generate(int count) {
 		x = new float[count];
 		y = new float[count];
 		direction = new int[count];
 		
 		for(int v=0; v<count; v++) {
-			x[v] = xmax/2;
-			y[v] = ymax/2;
+			x[v] = Main.width / 2;
+			y[v] = Main.height / 2;
 			direction[v] = MathHelper.randomMinMax(0, 359);
 		}
 	}

@@ -14,12 +14,15 @@ public class Main extends JFrame {
 	public static Ants ants;
 	public static Timer t;
 	
+	public static int width = 800;
+	public static int height = 600;
+	
 	public static int antsCount = 1000;
 	
 	private static final long serialVersionUID = 1L;
 
 	public Main() {
-		setSize(840, 500);
+		setSize(width, height);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -28,7 +31,7 @@ public class Main extends JFrame {
 		
 		// tworzymy klase i generujemy
 		ants = new Ants();
-		ants.generate(antsCount, 840, 500);
+		ants.generate(antsCount);
 		
 		add(board = new Board());
 		
