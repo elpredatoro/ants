@@ -10,9 +10,12 @@ import javax.swing.JFrame;
  */
 public class Main extends JFrame {
 
-	/**
-	 * 
-	 */
+	public static Board board;
+	public static Ants ants;
+	public static Timer t;
+	
+	public static int antsCount = 1000;
+	
 	private static final long serialVersionUID = 1L;
 
 	public Main() {
@@ -22,11 +25,15 @@ public class Main extends JFrame {
 		setLayout(new BorderLayout());
 		setTitle("Ants test v0.2");
 		setVisible(true);
-		Core core;
-		add(core = new Core(840, 500));
 		
-		Timer timer = new Timer();
-		timer.schedule(new TimerHelper(core), 1000, 10);
+		// tworzymy klase i generujemy
+		ants = new Ants();
+		ants.generate(antsCount, 840, 500);
+		
+		add(board = new Board());
+		
+		t = new Timer();
+		t.schedule(new TimerHelper(), 1000, 10);
 	}
 	
 	public static void main(String[] args) {

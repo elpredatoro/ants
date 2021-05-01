@@ -4,59 +4,66 @@ import java.util.TimerTask;
 
 public class TimerHelper extends TimerTask {
 
-	private Core core;
-	
-	public TimerHelper(Core core) {
+	public TimerHelper() {
 		super();
-		this.core = core;
 	}
 
 	@Override
 	public void run() {
-		core.repaint();
-		//System.out.printf("\nh=%s, w=%s", core.getHeight(), core.getWidth());
-		//int v = 0;
-		for(int v=0; v<core.count; v++) {
+		Ants a = Main.ants;
+		Board b = Main.board;
+		
+		b.repaint();
+		
+		for(int v=0; v<Main.antsCount; v++) {
+			float x = a.getX(v);
+			float y = a.getY(v);
+			int dir = a.getDirection(v);
+			
 			boolean dir_negative = Main.randomMinMax(0, 1) == 1 ? true : false;
-			int dir_diff = (dir_negative ? 0 - Main.randomMinMax(0, core.max_dir_variation) : Main.randomMinMax(0, core.max_dir_variation));
-			core.direction[v] += dir_diff;
+			int dir_diff = (dir_negative ? 0 - Main.randomMinMax(0, Ants.max_dir_variation) : Main.randomMinMax(0, Ants.max_dir_variation));
+			dir += dir_diff;
 			
-			if(core.direction[v] < 0) {
-				core.direction[v] += 360;
+			if(dir < 0) {
+				dir += 360;
 			}
-			if(core.direction[v] >= 360) {
-				core.direction[v] -= 360;
-			}
-			
-			float[] diff = calculateNewXYDiff(core.speed, core.direction[v]);
-			core.x_diff[v] = diff[0];
-			core.y_diff[v] = diff[1];
-			
-			if (core.x[v] > core.getWidth() - core.bounds && core.x_diff[v] > 0) {
-				core.x_diff[v] = 0 - core.x_diff[v];
-				core.direction[v] = getOppositeAngle(core.direction[v]);
-			}
-			if (core.x[v] < 0 && core.x_diff[v] < 0) {
-				core.x_diff[v] = 0 - core.x_diff[v];
-				core.direction[v] = getOppositeAngle(core.direction[v]);
+			if(dir >= 360) {
+				dir -= 360;
 			}
 			
-			core.x[v] = core.x[v] + core.x_diff[v];
+			float[] diff = calculateNewXYDiff(Ants.speed, dir);
+			float x_diff = diff[0];
+			float y_diff = diff[1];
+			
+			if (x > b.getWidth() - Ants.bounds && x_diff > 0) {
+				x_diff = 0 - x_diff;
+				dir = changeAngle(dir);
+			}
+			if (x < 0 && x_diff < 0) {
+				x_diff = 0 - x_diff;
+				dir = changeAngle(dir);
+			}
+			
+			x = x + x_diff;
 				
-			if (core.y[v] > core.getHeight() - core.bounds && core.y_diff[v] > 0) {
-				core.y_diff[v] = 0 - core.y_diff[v];
-				core.direction[v] = getOppositeAngle(core.direction[v]);
+			if (y > b.getHeight() - Ants.bounds && y_diff > 0) {
+				y_diff = 0 - y_diff;
+				dir = changeAngle(dir);
 			}
-			if (core.y[v] < 0 && core.y_diff[v] < 0) {
-				core.y_diff[v] = 0 - core.y_diff[v];
-				core.direction[v] = getOppositeAngle(core.direction[v]);
+			if (y < 0 && y_diff < 0) {
+				y_diff = 0 - y_diff;
+				dir = changeAngle(dir);
 			}
 			
-			core.y[v] = core.y[v] + core.y_diff[v];
+			y = y + y_diff;
 			
-			//System.out.printf("\nv=%s, x=%s, y=%s, bounds=%s", v, core.x[v], core.y[v], core.bounds[v]);
+			//System.out.printf("\nv=%s, x=%s, y=%s, bounds=%s", v, board.x[v], board.y[v], board.bounds[v]);
 			
-			core.repaint();
+			b.repaint();
+			
+			a.setX(v, x);
+			a.setY(v, y);
+			a.setDirection(v, dir);
 		}
 	}
 	
@@ -69,16 +76,7 @@ public class TimerHelper extends TimerTask {
 		return returnval;
 	}
 	
-	private float[] calculateNewXY(float x, float y, float speed, float direction) {
-		float newx = x + (float) Math.cos(Math.toRadians(direction)) * speed;
-		float newy = y + (float) Math.sin(Math.toRadians(direction)) * speed;
-		
-		float[] returnval = {newx, newy};
-		
-		return returnval;
-	}
-	
-	private int getOppositeAngle(int angle) {
+	private int changeAngle(int angle) {
 		int newdir = angle + 90;
 		
 		if(newdir < 0) {
