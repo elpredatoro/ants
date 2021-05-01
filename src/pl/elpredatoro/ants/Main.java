@@ -32,15 +32,12 @@ public class Main extends JFrame {
 		
 		add(board = new Board());
 		
+		// timer odpalany do 10ms
 		t = new Timer();
 		t.schedule(new TimerHelper(), 1000, 10);
 	}
 	
 	public static void main(String[] args) {
 		new Main();
-	}
-	
-	public static int randomMinMax(int min, int max) {
-		return (min + (int)(Math.random() * ((max - min) + 1)));
 	}
 }
