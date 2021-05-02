@@ -1,8 +1,12 @@
 package pl.elpredatoro.ants;
 
 import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Timer;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**
@@ -19,6 +23,8 @@ public class Main extends JFrame {
 	
 	public static int antsCount = 1000;
 	
+	public static BufferedImage background = null;
+	
 	private static final long serialVersionUID = 1L;
 
 	public Main() {
@@ -27,7 +33,15 @@ public class Main extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setTitle("Ants test v0.2");
+		setResizable(false);
 		setVisible(true);
+		
+		try {
+			background = ImageIO.read(new FileInputStream("res/background.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// tworzymy klase i generujemy
 		ants = new Ants();
@@ -38,6 +52,8 @@ public class Main extends JFrame {
 		// timer odpalany do 10ms
 		t = new Timer();
 		t.schedule(new TimerHelper(), 1000, 10);
+		
+		this.revalidate();
 	}
 	
 	public static void main(String[] args) {

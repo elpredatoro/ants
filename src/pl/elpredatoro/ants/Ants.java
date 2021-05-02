@@ -1,5 +1,8 @@
 package pl.elpredatoro.ants;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+
 public class Ants
 {
 	public static int bounds = 2;
@@ -32,6 +35,9 @@ public class Ants
 		float y = getY(antId);
 		int dir = getDirection(antId);
 		
+		int[] rgb = getPixelValue(x,y);
+		//System.out.printf("\nrgb=(%s, %s, %s)", rgb[0], rgb[1], rgb[2]);
+		
 		boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
 		int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
 		dir += dir_diff;
@@ -43,31 +49,16 @@ public class Ants
 			dir -= 360;
 		}
 		
+		if(detectWall(x, y, dir)) {
+			dir = changeAngle(dir);
+		}
+		
 		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, dir);
 		float x_diff = diff[0];
 		float y_diff = diff[1];
 		
-		if (x > b.getWidth() - Ants.bounds && x_diff > 0) {
-			x_diff = 0 - x_diff;
-			dir = changeAngle(dir);
-		}
-		if (x < 0 && x_diff < 0) {
-			x_diff = 0 - x_diff;
-			dir = changeAngle(dir);
-		}
-		
-		x = x + x_diff;
-			
-		if (y > b.getHeight() - Ants.bounds && y_diff > 0) {
-			y_diff = 0 - y_diff;
-			dir = changeAngle(dir);
-		}
-		if (y < 0 && y_diff < 0) {
-			y_diff = 0 - y_diff;
-			dir = changeAngle(dir);
-		}
-		
-		y = y + y_diff;
+		x += x_diff;
+		y += y_diff;
 		
 		setX(antId, x);
 		setY(antId, y);
@@ -85,6 +76,48 @@ public class Ants
 		}
 		
 		return newdir;
+	}
+	
+	private boolean detectWall(float x, float y, int direction) {
+		boolean detected = false;
+		float x_diff = x;
+		float y_diff = y;
+		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
+		for(int c = 1; c <= 5; c++) {
+			x_diff += diff[0];
+			y_diff += diff[1];
+			
+			if(pixelIsNotNull(x_diff, y_diff)) {
+				detected = true;
+			}
+		}
+		
+		return detected;
+	}
+	
+	private boolean pixelIsNotNull(float x, float y) {
+		int[] rgb = getPixelValue(x, y);
+		if(rgb[0] != 0 || rgb[1] != 0 || rgb[2] != 0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private String getPixelValueAsString(float x, float y) {
+		int[] rgb = getPixelValue(x, y);
+		
+		return String.valueOf(rgb[0] + "," + rgb[1] + "," + rgb[2]);
+	}
+	
+	private int[] getPixelValue(float x, float y) {
+		BufferedImage back = Main.background;
+		Color color = new Color(back.getRGB((int)x, (int)y));
+		int cr = color.getRed();
+		int cg = color.getGreen();
+		int cb = color.getBlue();
+		
+		return new int[]{cr, cg, cb};
 	}
 	
 	/* getters & setters */
