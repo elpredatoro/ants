@@ -10,13 +10,12 @@ public class TimerHelper extends TimerTask {
 
 	@Override
 	public void run() {
-		Ants a = Main.ants;
 		Board b = Main.board;
-		
 		b.repaint();
 		
-		for(int v=0; v<Main.antsCount; v++) {
-			a.move(v);
+		for(int v = 0; v < Ants.count; v++) {
+			Ant ant = Ants.getAnt(v);
+			ant.move();
 			
 			b.repaint();
 		}
