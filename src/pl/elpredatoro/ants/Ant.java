@@ -3,6 +3,7 @@ package pl.elpredatoro.ants;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 public class Ant
@@ -11,26 +12,43 @@ public class Ant
 	private float x;
 	private float y;
 	
-	boolean seekFood = true;
 	boolean hasFood = false;
-	boolean seekHome = false;
 	
-	boolean goingForFood = false;
+	boolean foodDetected = false;
 	private int foodx;
 	private int foody;
 	
 	public Ant() {
-		x = 50;
-		y = 50;
+		x = Ants.homex;
+		y = Ants.homey;
 		direction = MathHelper.randomMinMax(0, 359);
 	}
 	
 	public void move() {
+		if(atXY(Ants.homex, Ants.homey)) {
+			hasFood = false;
+			foodDetected = false;
+			
+			direction = MathHelper.randomMinMax(0, 359);
+		}
+		
 		// losowe zmiany kierunku
-		if(!goingForFood) {
+		if(!hasFood || !foodDetected) {
 			boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
 			int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
 			direction += dir_diff;
+		}
+		
+		if(foodDetected) {
+			goToXY(foodx, foody);
+			
+			if(atXY(foodx, foody)) {
+				foodColected(foodx, foody);
+			}
+		}
+		
+		if(hasFood) {
+			goToXY(Ants.homex, Ants.homey);
 		}
 		
 		// korekta kierunku jesli poza zakresem
@@ -66,6 +84,18 @@ public class Ant
 		return newdir;
 	}
 	
+	private void goToXY(int x, int y) {
+		direction = (int)Math.toDegrees(Math.atan2(y - this.y, x - this.x));
+		//System.out.printf("\nnew_dir=%s", direction);
+	}
+	
+	private boolean atXY(int x, int y) {
+		Point p = new Point((int)this.x, (int)this.y);
+		int dist = (int)p.distance(x, y);
+		
+		return (dist < 3) ? true : false;
+	}
+	
 	private void detectObstacles(float x, float y, int direction) {
 		float x_diff = x;
 		float y_diff = y;
@@ -90,13 +120,18 @@ public class Ant
 	
 	private void foodDetected(float x, float y) {
 		if(!hasFood) {
-			hasFood = true;
-			seekHome = true;
-			seekFood = false;
-			
-			BufferedImage back = Main.background;
-			back.setRGB((int)x, (int)y, 0);
+			foodDetected = true;
+			foodx = (int)x;
+			foody = (int)y;
 		}
+	}
+	
+	private void foodColected(float x, float y) {
+		hasFood = true;
+		foodDetected = false;
+		
+		BufferedImage back = Main.background;
+		back.setRGB((int)x, (int)y, 0);
 	}
 	
 	private boolean isWall(float x, float y) {
