@@ -59,7 +59,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		Graphics g = Main.background.getGraphics();
 		Graphics2D g2d = (Graphics2D) g;
 		
-		g2d.setColor(new Color(102,125,137));
+		g2d.setColor(Colors.wall);
 		g2d.setStroke(new BasicStroke(10f));
 		g2d.drawLine(x1, y1, x2, y2);
 	}
@@ -67,10 +67,6 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		super.paintComponent(g2d);
-		
-//		for(int z=0; z<10000; z++) {
-//			Main.background.setRGB(MathHelper.randomMinMax(10, 500), MathHelper.randomMinMax(10, 500), new Color(0, 255, 0).getRGB());
-//		}
 		
 		g2d.drawImage(Main.background, 0, 0, null);
 		

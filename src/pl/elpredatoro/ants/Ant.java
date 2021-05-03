@@ -13,13 +13,19 @@ public class Ant
 		x = Main.width / 2;
 		y = Main.height / 2;
 		direction = MathHelper.randomMinMax(0, 359);
+		
+		boolean seekFood = true;
+		boolean hasFood = false;
+		boolean seekHome = false;
 	}
 	
 	public void move() {
+		// losowe zmiany kierunku
 		boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
 		int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
 		direction += dir_diff;
 		
+		// korekta kierunku jesli poza zakresem
 		if(direction < 0) {
 			direction += 360;
 		}
@@ -27,10 +33,12 @@ public class Ant
 			direction -= 360;
 		}
 		
+		// wykrywanie scian
 		if(detectWall(x, y, direction)) {
 			direction = changeAngle(direction);
 		}
 		
+		// kalkulacja nowych wspolrzednych
 		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
 		float x_diff = diff[0];
 		float y_diff = diff[1];
@@ -61,7 +69,7 @@ public class Ant
 			x_diff += diff[0];
 			y_diff += diff[1];
 			
-			if(pixelIsNotNull(x_diff, y_diff)) {
+			if(isWall(x_diff, y_diff)) {
 				detected = true;
 			}
 		}
@@ -69,19 +77,24 @@ public class Ant
 		return detected;
 	}
 	
-	private boolean pixelIsNotNull(float x, float y) {
+	private boolean isWall(float x, float y) {
 		BufferedImage back = Main.background;
-		if (back.getRGB((int)x, (int)y) != 0) {
+		
+		if (back.getRGB((int)x, (int)y) == Colors.wall.getRGB()) {
 			return true;
 		}
 		
 		return false;
 	}
 	
-	private String getPixelValueAsString(float x, float y) {
-		int[] rgb = getPixelValue(x, y);
+	private boolean isFood(float x, float y) {
+		BufferedImage back = Main.background;
 		
-		return String.valueOf(rgb[0] + "," + rgb[1] + "," + rgb[2]);
+		if (back.getRGB((int)x, (int)y) == Colors.food.getRGB()) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	private int[] getPixelValue(float x, float y) {
