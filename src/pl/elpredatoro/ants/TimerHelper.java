@@ -19,5 +19,7 @@ public class TimerHelper extends TimerTask {
 			
 			b.repaint();
 		}
+		
+		Markers.clearOld();
 	}
 }

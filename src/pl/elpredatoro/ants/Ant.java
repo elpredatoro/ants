@@ -48,7 +48,10 @@ public class Ant
 		}
 		
 		if(hasFood) {
-			goToXY(Ants.homex, Ants.homey);
+			Markers.createFood((int)x, (int)y);
+			//goToXY(Ants.homex, Ants.homey);
+		} else {
+			Markers.createHome((int)x, (int)y);
 		}
 		
 		// korekta kierunku jesli poza zakresem
