@@ -1,6 +1,8 @@
 package pl.elpredatoro.ants;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class Ant
@@ -9,21 +11,27 @@ public class Ant
 	private float x;
 	private float y;
 	
+	boolean seekFood = true;
+	boolean hasFood = false;
+	boolean seekHome = false;
+	
+	boolean goingForFood = false;
+	private int foodx;
+	private int foody;
+	
 	public Ant() {
-		x = Main.width / 2;
-		y = Main.height / 2;
+		x = 50;
+		y = 50;
 		direction = MathHelper.randomMinMax(0, 359);
-		
-		boolean seekFood = true;
-		boolean hasFood = false;
-		boolean seekHome = false;
 	}
 	
 	public void move() {
 		// losowe zmiany kierunku
-		boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
-		int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
-		direction += dir_diff;
+		if(!goingForFood) {
+			boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
+			int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
+			direction += dir_diff;
+		}
 		
 		// korekta kierunku jesli poza zakresem
 		if(direction < 0) {
@@ -33,10 +41,8 @@ public class Ant
 			direction -= 360;
 		}
 		
-		// wykrywanie scian
-		if(detectWall(x, y, direction)) {
-			direction = changeAngle(direction);
-		}
+		// wykrywanie co jest przed nami
+		detectObstacles(x, y, direction);
 		
 		// kalkulacja nowych wspolrzednych
 		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
@@ -60,8 +66,7 @@ public class Ant
 		return newdir;
 	}
 	
-	private boolean detectWall(float x, float y, int direction) {
-		boolean detected = false;
+	private void detectObstacles(float x, float y, int direction) {
 		float x_diff = x;
 		float y_diff = y;
 		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
@@ -70,11 +75,28 @@ public class Ant
 			y_diff += diff[1];
 			
 			if(isWall(x_diff, y_diff)) {
-				detected = true;
+				wallDetected(x_diff, y_diff);
+			}
+			
+			if(isFood(x_diff, y_diff)) {
+				foodDetected(x_diff, y_diff);
 			}
 		}
-		
-		return detected;
+	}
+	
+	private void wallDetected(float x, float y) {
+		direction = changeAngle(direction);
+	}
+	
+	private void foodDetected(float x, float y) {
+		if(!hasFood) {
+			hasFood = true;
+			seekHome = true;
+			seekFood = false;
+			
+			BufferedImage back = Main.background;
+			back.setRGB((int)x, (int)y, 0);
+		}
 	}
 	
 	private boolean isWall(float x, float y) {
@@ -95,16 +117,6 @@ public class Ant
 		}
 		
 		return false;
-	}
-	
-	private int[] getPixelValue(float x, float y) {
-		BufferedImage back = Main.background;
-		Color color = new Color(back.getRGB((int)x, (int)y));
-		int cr = color.getRed();
-		int cg = color.getGreen();
-		int cb = color.getBlue();
-		
-		return new int[]{cr, cg, cb};
 	}
 	
 	public int getDirection() {
