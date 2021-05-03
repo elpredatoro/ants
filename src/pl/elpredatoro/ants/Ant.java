@@ -70,8 +70,8 @@ public class Ant
 	}
 	
 	private boolean pixelIsNotNull(float x, float y) {
-		int[] rgb = getPixelValue(x, y);
-		if(rgb[0] != 0 || rgb[1] != 0 || rgb[2] != 0) {
+		BufferedImage back = Main.background;
+		if (back.getRGB((int)x, (int)y) != 0) {
 			return true;
 		}
 		
