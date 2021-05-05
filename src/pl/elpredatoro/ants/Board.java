@@ -2,6 +2,7 @@ package pl.elpredatoro.ants;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -69,6 +70,23 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		super.paintComponent(g2d);
 		
 		g2d.drawImage(Main.background, 0, 0, null);
+		
+		if(false) {
+			ArrayList<Marker> mtemp = (ArrayList<Marker>) Markers.markers.clone();
+			g2d.setColor(Color.RED);
+			for(Marker m : mtemp) {
+				if(m.getType() == MarkerType.home) {
+					g2d.fillOval((int) m.getX(), (int) m.getY(), Ants.bounds, Ants.bounds);
+				}
+			}
+			
+			g2d.setColor(Color.BLUE);
+			for(Marker m : mtemp) {
+				if(m.getType() == MarkerType.food) {
+					g2d.fillOval((int) m.getX(), (int) m.getY(), Ants.bounds, Ants.bounds);
+				}
+			}
+		}
 		
 		g2d.setColor(Color.BLACK);
 		for(int v = 0; v < Ants.count; v++) {

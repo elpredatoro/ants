@@ -21,7 +21,7 @@ public class Main extends JFrame {
 	public static int width = 800;
 	public static int height = 600;
 	
-	public static int antsCount = 1000;
+	public static int antsCount = 100;
 	
 	public static BufferedImage background = null;
 	
@@ -52,6 +52,9 @@ public class Main extends JFrame {
 		// timer odpalany do 10ms
 		t = new Timer();
 		t.schedule(new TimerHelper(), 1000, 10);
+		
+		Timer t2 = new Timer();
+		t2.schedule(new TimerHelper2(), 1000, 1000);
 		
 		this.revalidate();
 	}

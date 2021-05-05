@@ -1,10 +1,11 @@
 package pl.elpredatoro.ants;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Ant
 {
@@ -45,11 +46,23 @@ public class Ant
 			if(atXY(foodx, foody)) {
 				foodColected(foodx, foody);
 			}
+		} else {
+			if(hasFood) {
+				Marker m = seekMarker((int)x, (int)y, MarkerType.home);
+				if(m != null) {
+					goToXY(m.getX(), m.getY());
+				}
+			} else {
+				Marker m = seekMarker((int)x, (int)y, MarkerType.food);
+				if(m != null) {
+					goToXY(m.getX(), m.getY());
+				}
+			}
 		}
 		
 		if(hasFood) {
 			Markers.createFood((int)x, (int)y);
-			//goToXY(Ants.homex, Ants.homey);
+			goToXY(Ants.homex, Ants.homey);
 		} else {
 			Markers.createHome((int)x, (int)y);
 		}
@@ -87,16 +100,39 @@ public class Ant
 		return newdir;
 	}
 	
+	private Marker seekMarker(int x, int y, MarkerType type) {
+		ArrayList<Marker> markers = new ArrayList<Marker>();
+		ArrayList<Marker> mcopy = (ArrayList<Marker>) Markers.markers.clone();
+		for (Marker m : mcopy) {
+			if(m.getType() == type && atXY(m.getX(), m.getY(), 10)) {
+				markers.add(m);
+			}
+		}
+		
+		Optional<Marker> marker;
+		marker = markers.stream().sorted((o1, o2)->o1.getCreated().compareTo(o2.getCreated())).findFirst();
+		
+		if(marker.isPresent()) {
+			return marker.get();
+		} else {
+			return null;
+		}
+	}
+	
 	private void goToXY(int x, int y) {
 		direction = (int)Math.toDegrees(Math.atan2(y - this.y, x - this.x));
 		//System.out.printf("\nnew_dir=%s", direction);
 	}
 	
 	private boolean atXY(int x, int y) {
+		return atXY(x, y, 3);
+	}
+	
+	private boolean atXY(int x, int y, int distance) {
 		Point p = new Point((int)this.x, (int)this.y);
 		int dist = (int)p.distance(x, y);
 		
-		return (dist < 3) ? true : false;
+		return (dist < distance) ? true : false;
 	}
 	
 	private void detectObstacles(float x, float y, int direction) {
