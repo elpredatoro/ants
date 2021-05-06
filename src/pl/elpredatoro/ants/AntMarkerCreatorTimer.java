@@ -10,14 +10,14 @@ public class AntMarkerCreatorTimer extends TimerTask {
 
 	@Override
 	public void run() {
-		for(int v = 0; v < Ants.count; v++) {
-			Ant ant = Ants.getAnt(v);
-			ant.createMarker();
-		}
+//		for(int v = 0; v < Ants.count; v++) {
+//			Ant ant = Ants.getAnt(v);
+//			ant.createMarker();
+//		}
 		
 		//Main.markers.clearOld();
 		
-		Ants.pm.clearOld();
+		//Ants.pm.clearOld();
 		
 		//System.out.printf("\n path count=%s", Ants.pm.getPathsCount());
 	}

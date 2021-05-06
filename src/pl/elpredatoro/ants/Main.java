@@ -59,9 +59,6 @@ public class Main extends JFrame {
 		Timer antMove = new Timer();
 		antMove.schedule(new AntMoveTimer(), 1000, 10);
 		
-		Timer antMarkerCreatorTimer = new Timer();
-		antMarkerCreatorTimer.schedule(new AntMarkerCreatorTimer(), 1000, 100);
-		
 		this.revalidate();
 	}
 	

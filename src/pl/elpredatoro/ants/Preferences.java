@@ -6,7 +6,8 @@ public class Preferences {
 	
 	public static int antsCount = 100;
 	
-	public static int markerDecayTime = 30000;
+	public static int pathLastUseDecayTime = 30000;
+	public static int minMarkerDelay = 10;
 	
 	public static int antHomeX = 400;
 	public static int antHomeY = 300;
@@ -14,7 +15,6 @@ public class Preferences {
 	public static boolean drawFoodMarkers = true;
 	public static boolean drawHomeMarkers = true;
 	
-	public static int markerDetectDistance = 40;
 	public static int pathDetectDistance = 40;
 	public static int foodDetectDistance = 40;
 	public static int homeDetectDistance = 40;

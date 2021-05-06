@@ -89,11 +89,7 @@ public class Ant
 		}
 		
 		// losowe zmiany kierunku
-		//if(mode == AntMode.seekFood) {
-			boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
-			int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
-			direction += dir_diff;
-		//}
+		randomizeDirection();
 		
 		// korekta kierunku jesli poza zakresem
 		if(direction < 0) {
@@ -119,11 +115,17 @@ public class Ant
 		y += y_diff;
 	}
 	
+	public void randomizeDirection() {
+		boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
+		int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
+		direction += dir_diff;
+	}
+	
 	public void createMarker() {
 		if(mode == AntMode.toHome) {
-			Ants.pm.addHomeMarker(pathId, (int)x, (int)y);
+			Ants.pm.addMarker(pathId, (int)x, (int)y);
 		} else {
-			Ants.pm.addFoodMarker(pathId, (int)x, (int)y);
+			Ants.pm.addMarker(pathId, (int)x, (int)y);
 		}
 	}
 	
@@ -145,7 +147,11 @@ public class Ant
 		
 		if(pathId != null) {
 			fp = new FollowingPath(pathId);
-			//System.out.printf("\nPath found id=%s", pathId);
+			
+			Integer index = Ants.pm.getIndexForPointInPath(pathId, (int)x, (int)y);
+			fp.setIndex(index);
+			
+			System.out.printf("\nPath found id=%s, index=%s", pathId, index);
 		}
 	}
 	

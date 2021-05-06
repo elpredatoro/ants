@@ -2,8 +2,10 @@ package pl.elpredatoro.ants;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class PathManager {
@@ -35,16 +37,20 @@ public class PathManager {
 	}
 	
 	public LinkedHashMap<Integer, Path> getPaths(PathType type) {
-		pathsCopy = paths;
-		
 		LinkedHashMap<Integer, Path> foundPaths = new LinkedHashMap<Integer, Path>();
 		
-		Set<Integer> keys = pathsCopy.keySet();
-		for(Integer p : keys) {
-			Path path = pathsCopy.get(p);
-			if(path.getType() == type && path.isFinished()) {
-				foundPaths.put(p, path);
+		try {
+			pathsCopy = paths;
+			
+			Set<Integer> keys = pathsCopy.keySet();
+			for(Integer p : keys) {
+				Path path = pathsCopy.get(p);
+				if(path.getType() == type && path.isFinished()) {
+					foundPaths.put(p, path);
+				}
 			}
+		} catch (ConcurrentModificationException e) {
+			//e.printStackTrace();
 		}
 		
 		return foundPaths;
@@ -54,15 +60,19 @@ public class PathManager {
 		return paths.size();
 	}
 	
-	public void addFoodMarker(Integer id, int x, int y) {
+	public void addMarker(Integer id, int x, int y) {
 		if(paths.containsKey(id)) {
-			paths.get(id).createMarker(x, y);
-		}
-	}
-	
-	public void addHomeMarker(Integer id, int x, int y) {
-		if(paths.containsKey(id)) {
-			paths.get(id).createMarker(x, y);
+			if(paths.get(id).getPoints().size() > 0) {
+				Marker last = paths.get(id).getPoints().getLast();
+				Point lastPoint = new Point(last.getX(), last.getY());
+				Point currentPoint = new Point(x, y);
+				
+				if(lastPoint.distance(currentPoint) >= Preferences.minMarkerDelay) {
+					paths.get(id).createMarker(x, y);
+				}
+			} else {
+				paths.get(id).createMarker(x, y);
+			}
 		}
 	}
 	
@@ -98,17 +108,36 @@ public class PathManager {
 		return shortestPathId;
 	}
 	
-	public void clearOld() {
-		Set<Integer> keys = paths.keySet();
-		Date d = new Date(new Date().getTime() - Preferences.markerDecayTime);
-		ArrayList<Integer> toRemove = new ArrayList<Integer>();
-		for(Integer p : keys) {
-			Path path = paths.get(p);
-			if(path.isFinished() && path.getLastUsed().before(d)) {
-				try {
-					paths.remove(p);
-				} catch(Exception e) {}
+	public Integer getIndexForPointInPath(Integer id, int x, int y) {
+		LinkedList<Marker> points = paths.get(id).getPoints();
+		
+		int index = 0;
+		for(Marker p : points) {
+			if(p.getX() == x && p.getY() == y) {
+				return index;
 			}
+			
+			index++;
+		}
+		
+		return paths.get(id).getPoints().size()-1;
+	}
+	
+	public void clearOld() {
+		try {
+			Set<Integer> keys = paths.keySet();
+			Date d = new Date(new Date().getTime() - Preferences.pathLastUseDecayTime);
+			ArrayList<Integer> toRemove = new ArrayList<Integer>();
+			for(Integer p : keys) {
+				Path path = paths.get(p);
+				if(path.isFinished() && path.getLastUsed().before(d)) {
+					try {
+						paths.remove(p);
+					} catch(Exception e) {}
+				}
+			}
+		} catch (ConcurrentModificationException e) {
+			//e.printStackTrace();
 		}
 	}
 }
