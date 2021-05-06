@@ -12,7 +12,6 @@ public class TimerHelper2 extends TimerTask {
 	public void run() {
 		System.out.printf("\n markers count=%s", Markers.markers.size());
 		
-		
 		Markers.mergeList();
 		Markers.clearOld();
 	}

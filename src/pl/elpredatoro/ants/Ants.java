@@ -15,9 +15,6 @@ public class Ants
 	
 	public static int count;
 	
-	public static int homex = 400;
-	public static int homey = 300;
-	
 	public Ants() {
 		
 	}

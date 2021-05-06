@@ -2,9 +2,13 @@ package pl.elpredatoro.ants;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Ant
@@ -12,42 +16,32 @@ public class Ant
 	private int direction;
 	private float x;
 	private float y;
+	AntMode mode = AntMode.seekFood;
 	
-	boolean hasFood = false;
-	
-	boolean foodDetected = false;
 	private int foodx;
 	private int foody;
 	
 	public Ant() {
-		x = Ants.homex;
-		y = Ants.homey;
+		x = Preferences.antHomeX;
+		y = Preferences.antHomeY;
 		direction = MathHelper.randomMinMax(0, 359);
 	}
 	
 	public void move() {
-		if(atXY(Ants.homex, Ants.homey)) {
-			hasFood = false;
-			foodDetected = false;
+		if(atXY(Preferences.antHomeX, Preferences.antHomeY) && mode == AntMode.toHome) {
+			mode = AntMode.seekFood;
 			
 			direction = MathHelper.randomMinMax(0, 359);
 		}
 		
-		// losowe zmiany kierunku
-		if(!hasFood || !foodDetected) {
-			boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
-			int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
-			direction += dir_diff;
-		}
-		
-		if(foodDetected) {
+		if(mode == AntMode.foodFound) {
 			goToXY(foodx, foody);
 			
 			if(atXY(foodx, foody)) {
 				foodColected(foodx, foody);
 			}
 		} else {
-			if(hasFood) {
+			if(mode == AntMode.toHome) {
 				Marker m = seekMarker((int)x, (int)y, MarkerType.home);
 				if(m != null) {
 					goToXY(m.getX(), m.getY());
@@ -60,12 +54,16 @@ public class Ant
 			}
 		}
 		
-		if(hasFood) {
-			Markers.createFood((int)x, (int)y);
-			goToXY(Ants.homex, Ants.homey);
-		} else {
-			Markers.createHome((int)x, (int)y);
+		if(mode == AntMode.toHome) {
+			detectHome();
 		}
+		
+		// losowe zmiany kierunku
+		//if(mode == AntMode.seekFood) {
+			boolean dir_negative = MathHelper.randomMinMax(0, 1) == 1 ? true : false;
+			int dir_diff = (dir_negative ? 0 - MathHelper.randomMinMax(0, Ants.max_dir_variation) : MathHelper.randomMinMax(0, Ants.max_dir_variation));
+			direction += dir_diff;
+		//}
 		
 		// korekta kierunku jesli poza zakresem
 		if(direction < 0) {
@@ -78,6 +76,10 @@ public class Ant
 		// wykrywanie co jest przed nami
 		detectObstacles(x, y, direction);
 		
+		if(mode == AntMode.seekFood) {
+			detectFood();
+		}
+		
 		// kalkulacja nowych wspolrzednych
 		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
 		float x_diff = diff[0];
@@ -85,6 +87,14 @@ public class Ant
 		
 		x += x_diff;
 		y += y_diff;
+	}
+	
+	public void createMarker() {
+		if(mode == AntMode.toHome) {
+			Markers.createFood((int)x, (int)y);
+		} else {
+			Markers.createHome((int)x, (int)y);
+		}
 	}
 	
 	private int changeAngle(int angle) {
@@ -101,19 +111,26 @@ public class Ant
 	}
 	
 	private Marker seekMarker(int x, int y, MarkerType type) {
-		ArrayList<Marker> markers = new ArrayList<Marker>();
-		ArrayList<Marker> mcopy = (ArrayList<Marker>) Markers.markers.clone();
+		LinkedList<Marker> markers = new LinkedList<Marker>();
+		LinkedList<Marker> mcopy = (LinkedList<Marker>) Markers.markers.clone();
 		for (Marker m : mcopy) {
-			if(m.getType() == type && atXY(m.getX(), m.getY(), 10)) {
+			if(m.getType() == type && atXY(m.getX(), m.getY(), Preferences.markerDetectDistance)) {
 				markers.add(m);
 			}
 		}
 		
-		Optional<Marker> marker;
-		marker = markers.stream().sorted((o1, o2)->o1.getCreated().compareTo(o2.getCreated())).findFirst();
-		
-		if(marker.isPresent()) {
-			return marker.get();
+		if(markers.size() > 0) {
+			Marker marker = markers.get(markers.size()-1);
+			
+			if(marker != null) {
+				String pattern = "yyyy-MM-dd HH:mm:ss";
+				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+				String fd = sdf.format(marker.getCreated());
+				System.out.printf("\nnewest df=%s", fd);
+				return marker;
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
@@ -135,6 +152,17 @@ public class Ant
 		return (dist < distance) ? true : false;
 	}
 	
+	private float distanceToXY(int x, int y) {
+		Point p = new Point((int)this.x, (int)this.y);
+		return (float)p.distance(x, y);
+	}
+	
+	private void detectHome() {
+		if(atXY(Preferences.antHomeX, Preferences.antHomeY, Preferences.homeDetectDistance)) {
+			goToXY(Preferences.antHomeX, Preferences.antHomeY);
+		}
+	}
+	
 	private void detectObstacles(float x, float y, int direction) {
 		float x_diff = x;
 		float y_diff = y;
@@ -146,10 +174,6 @@ public class Ant
 			if(isWall(x_diff, y_diff)) {
 				wallDetected(x_diff, y_diff);
 			}
-			
-			if(isFood(x_diff, y_diff)) {
-				foodDetected(x_diff, y_diff);
-			}
 		}
 	}
 	
@@ -157,20 +181,49 @@ public class Ant
 		direction = changeAngle(direction);
 	}
 	
-	private void foodDetected(float x, float y) {
-		if(!hasFood) {
-			foodDetected = true;
-			foodx = (int)x;
-			foody = (int)y;
+	private void detectFood() {
+		Food nearest = null;
+		for(Food f : Main.food) {
+			if(atXY(f.getX(), f.getY(), Preferences.foodDetectDistance) && !f.isDeleted()) {
+				if(nearest == null) {
+					nearest = f;
+				} else {
+					if(distanceToXY(f.getX(), f.getY()) < distanceToXY(nearest.getX(), nearest.getY())) {
+						nearest = f;
+					}
+				}
+			}
+		}
+		
+		if(nearest != null) {
+			foodDetected(nearest.getX(), nearest.getY());
+		}
+	}
+	
+	private void foodDetected(int x, int y) {
+		if(mode == AntMode.seekFood) {
+			mode = AntMode.foodFound;
+			foodx = x;
+			foody = y;
 		}
 	}
 	
 	private void foodColected(float x, float y) {
-		hasFood = true;
-		foodDetected = false;
+		for(Food f : Main.food) {
+			if(f.getX() == (int)x && f.getY() == (int)y) {
+				if(!f.isDeleted()) {
+					f.setDeleted(true);
+					mode = AntMode.toHome;
+					
+					BufferedImage back = Main.background;
+					back.setRGB((int)x, (int)y, 0);
+					
+					return;
+				}
+			}
+		}
 		
-		BufferedImage back = Main.background;
-		back.setRGB((int)x, (int)y, 0);
+		mode = AntMode.seekFood;
 	}
 	
 	private boolean isWall(float x, float y) {

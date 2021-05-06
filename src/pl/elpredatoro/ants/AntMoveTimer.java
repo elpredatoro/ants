@@ -2,9 +2,9 @@ package pl.elpredatoro.ants;
 
 import java.util.TimerTask;
 
-public class TimerHelper extends TimerTask {
+public class AntMoveTimer extends TimerTask {
 
-	public TimerHelper() {
+	public AntMoveTimer() {
 		super();
 	}
 

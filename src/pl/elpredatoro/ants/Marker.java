@@ -7,12 +7,14 @@ public class Marker {
 	private int y;
 	private Date created;
 	private MarkerType type;
+	private int weight;
 	
 	public Marker(int x, int y, MarkerType t) {
 		this.x = x;
 		this.y = y;
 		this.type = t;
 		this.created = new Date();
+		this.weight = 1;
 	}
 
 	public int getX() {
@@ -45,5 +47,13 @@ public class Marker {
 
 	public void setType(MarkerType type) {
 		this.type = type;
+	}
+
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
 }

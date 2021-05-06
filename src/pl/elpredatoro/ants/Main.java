@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 
 import javax.imageio.ImageIO;
@@ -16,19 +17,14 @@ public class Main extends JFrame {
 
 	public static Board board;
 	public static Ants ants;
-	public static Timer t;
-	
-	public static int width = 800;
-	public static int height = 600;
-	
-	public static int antsCount = 100;
+	public static ArrayList<Food> food = new ArrayList<Food>();
 	
 	public static BufferedImage background = null;
 	
 	private static final long serialVersionUID = 1L;
 
 	public Main() {
-		setSize(width, height);
+		setSize(Preferences.width, Preferences.height);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -38,6 +34,16 @@ public class Main extends JFrame {
 		
 		try {
 			background = ImageIO.read(new FileInputStream("res/background.png"));
+			int w = background.getWidth();
+			int h = background.getHeight();
+			
+			for(int x = 0; x < w; x++) {
+				for(int y = 0; y < h; y++) {
+					if(background.getRGB(x, y) == Colors.food.getRGB()) {
+						food.add(new Food(x, y));
+					}
+				}
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,16 +51,16 @@ public class Main extends JFrame {
 		
 		// tworzymy klase i generujemy
 		ants = new Ants();
-		ants.generate(antsCount);
+		ants.generate(Preferences.antsCount);
 		
 		add(board = new Board());
 		
-		// timer odpalany do 10ms
-		t = new Timer();
-		t.schedule(new TimerHelper(), 1000, 10);
+		// timery
+		Timer antMove = new Timer();
+		antMove.schedule(new AntMoveTimer(), 1000, 10);
 		
-		Timer t2 = new Timer();
-		t2.schedule(new TimerHelper2(), 1000, 1000);
+		Timer antMarkerCreatorTimer = new Timer();
+		antMarkerCreatorTimer.schedule(new AntMarkerCreatorTimer(), 1000, 100);
 		
 		this.revalidate();
 	}
