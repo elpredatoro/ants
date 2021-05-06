@@ -17,6 +17,7 @@ public class Main extends JFrame {
 
 	public static Board board;
 	public static Ants ants;
+	public static Markers markers;
 	public static ArrayList<Food> food = new ArrayList<Food>();
 	
 	public static BufferedImage background = null;
@@ -54,6 +55,8 @@ public class Main extends JFrame {
 		ants.generate(Preferences.antsCount);
 		
 		add(board = new Board());
+		
+		markers = new Markers();
 		
 		// timery
 		Timer antMove = new Timer();

@@ -15,8 +15,10 @@ public class AntMarkerCreatorTimer extends TimerTask {
 			ant.createMarker();
 		}
 		
-		Markers.clearOld();
+		//Main.markers.clearOld();
 		
-		System.out.printf("\n markers count=%s", Markers.markers.size());
+		Ants.pm.clearOld();
+		
+		//System.out.printf("\n path count=%s", Ants.pm.getPathsCount());
 	}
 }

@@ -16,6 +16,11 @@ public class Ant
 	private int direction;
 	private float x;
 	private float y;
+	
+	private int pathId = -1;
+	
+	private FollowingPath fp = null;
+	
 	AntMode mode = AntMode.seekFood;
 	
 	private int foodx;
@@ -28,8 +33,23 @@ public class Ant
 	}
 	
 	public void move() {
+		if(pathId == -1) {
+			if(mode == AntMode.toHome) {
+				pathId = Ants.pm.createNewPath(PathType.toFood);
+			} else {
+				pathId = Ants.pm.createNewPath(PathType.toHome);
+			}
+		}
+		
 		if(atXY(Preferences.antHomeX, Preferences.antHomeY) && mode == AntMode.toHome) {
 			mode = AntMode.seekFood;
+			
+			Ants.pm.getPath(pathId).setFinished(true);
+			Ants.pm.getPath(pathId).setLastUsed(new Date());
+			
+			pathId = -1;
+			
+			fp = null;
 			
 			direction = MathHelper.randomMinMax(0, 359);
 		}
@@ -44,12 +64,34 @@ public class Ant
 			if(mode == AntMode.toHome) {
 				Marker m = seekMarker((int)x, (int)y, MarkerType.home);
 				if(m != null) {
-					goToXY(m.getX(), m.getY());
+					//goToXY(m.getX(), m.getY());
 				}
 			} else {
 				Marker m = seekMarker((int)x, (int)y, MarkerType.food);
 				if(m != null) {
-					goToXY(m.getX(), m.getY());
+					//goToXY(m.getX(), m.getY());
+				}
+			}
+			
+			if(mode == AntMode.toHome && fp == null) {
+				seekPath(PathType.toHome);
+			}
+			
+			if(mode == AntMode.seekFood && fp == null) {
+				seekPath(PathType.toFood);
+			}
+		}
+		
+		// follow path
+		if(fp != null) {
+			Marker m = fp.getCurrentMarker();
+			goToXY(m.getX(), m.getY());
+			
+			if(atXY(m.getX(), m.getY())) {
+				//System.out.printf("\nindex=%s", fp.getIndex());
+				
+				if(!fp.updateIndex()) {
+					fp = null;
 				}
 			}
 		}
@@ -91,9 +133,11 @@ public class Ant
 	
 	public void createMarker() {
 		if(mode == AntMode.toHome) {
-			Markers.createFood((int)x, (int)y);
+			//Main.markers.createFood((int)x, (int)y);
+			Ants.pm.addFoodMarker(pathId, (int)x, (int)y);
 		} else {
-			Markers.createHome((int)x, (int)y);
+			//Main.markers.createHome((int)x, (int)y);
+			Ants.pm.addFoodMarker(pathId, (int)x, (int)y);
 		}
 	}
 	
@@ -110,9 +154,18 @@ public class Ant
 		return newdir;
 	}
 	
+	private void seekPath(PathType type) {
+		Integer pathId = Ants.pm.findPathContainingPoint((int)x, (int)y, type);
+		
+		if(pathId != null) {
+			fp = new FollowingPath(pathId);
+			System.out.printf("\nPath found id=%s", pathId);
+		}
+	}
+	
 	private Marker seekMarker(int x, int y, MarkerType type) {
 		LinkedList<Marker> markers = new LinkedList<Marker>();
-		LinkedList<Marker> mcopy = (LinkedList<Marker>) Markers.markers.clone();
+		LinkedList<Marker> mcopy = (LinkedList<Marker>) Main.markers.fetch();
 		for (Marker m : mcopy) {
 			if(m.getType() == type && atXY(m.getX(), m.getY(), Preferences.markerDetectDistance)) {
 				markers.add(m);
@@ -120,13 +173,13 @@ public class Ant
 		}
 		
 		if(markers.size() > 0) {
-			Marker marker = markers.get(markers.size()-1);
+			Marker marker = markers.get(0);
 			
 			if(marker != null) {
-				String pattern = "yyyy-MM-dd HH:mm:ss";
-				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-				String fd = sdf.format(marker.getCreated());
-				System.out.printf("\nnewest df=%s", fd);
+//				String pattern = "yyyy-MM-dd HH:mm:ss";
+//				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+//				String fd = sdf.format(marker.getCreated());
+//				System.out.printf("\nnewest df=%s", fd);
 				return marker;
 			} else {
 				return null;
@@ -214,6 +267,13 @@ public class Ant
 				if(!f.isDeleted()) {
 					f.setDeleted(true);
 					mode = AntMode.toHome;
+					
+					Ants.pm.getPath(pathId).setFinished(true);
+					Ants.pm.getPath(pathId).setLastUsed(new Date());
+					
+					pathId = -1;
+					
+					fp = null;
 					
 					BufferedImage back = Main.background;
 					back.setRGB((int)x, (int)y, 0);

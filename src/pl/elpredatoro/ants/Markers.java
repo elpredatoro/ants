@@ -7,52 +7,47 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 public class Markers {
-	public static LinkedList<Marker> markers = new LinkedList<Marker>();
-	//public static ArrayList<Marker> markerstemp = new ArrayList<Marker>();
+	public LinkedList<Marker> markers = new LinkedList<Marker>();
 	
-	public static void mergeList() {
-		//ArrayList<Marker> m = (ArrayList<Marker>) markerstemp.clone();
-		//markers.addAll(m);
-		//markerstemp.clear();
+	public LinkedList<Marker> fetch() {
+		return (LinkedList<Marker>) markers.clone();
 	}
 	
-	public static void clearOld() {
+	public void clearOld() {
 		Date d = new Date(new Date().getTime() - Preferences.markerDecayTime);
 		String pattern = "yyyy-MM-dd HH:mm:ss";
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		String fd = sdf.format(d);
 		
 		LinkedList<Marker> newmarkers = new LinkedList<Marker>();
-		for(Marker m : Markers.markers) {
+		for(Marker m : markers) {
 			if(m.getCreated().after(d)) {
 				newmarkers.add(m);
 			}
 		}
 		
-		Markers.markers = newmarkers;
+		markers = newmarkers;
 	}
 	
-	public static void createFood(int x, int y) {
+	public void createFood(int x, int y) {
 		createMarker(x, y, MarkerType.food);
 	}
 	
-	public static void createHome(int x, int y) {
+	public void createHome(int x, int y) {
 		createMarker(x, y, MarkerType.home);
 	}
 	
-	private static void createMarker(int x, int y, MarkerType type) {
-		for(Marker m : Markers.markers) {
-			if(x == m.getX() && y == m.getY() && type == m.getType()) {
-				m.setWeight(m.getWeight()+1);
-				m.setCreated(new Date());
-				
-				return;
-			}
-		}
+	private void createMarker(int x, int y, MarkerType type) {
+//		for(Marker m : Markers.markers) {
+//			if(x == m.getX() && y == m.getY() && type == m.getType()) {
+//				m.setWeight(m.getWeight()+1);
+//				m.setCreated(new Date());
+//				
+//				return;
+//			}
+//		}
 		
 		Marker m = new Marker(x, y, type);
-		Markers.markers.add(m);
-		
-		//System.out.printf("\n markers count=%s", Markers.markers.size());
+		markers.add(m);
 	}
 }

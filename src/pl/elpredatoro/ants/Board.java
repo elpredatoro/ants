@@ -3,7 +3,9 @@ package pl.elpredatoro.ants;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -72,22 +74,50 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		
 		g2d.drawImage(Main.background, 0, 0, null);
 		
+//		if(Preferences.drawHomeMarkers) {
+//			LinkedList<Marker> mtemp = (LinkedList<Marker>) Main.markers.fetch();
+//			g2d.setColor(Color.RED);
+//			for(Marker m : mtemp) {
+//				if(m.getType() == MarkerType.home) {
+//					g2d.fillOval((int) m.getX(), (int) m.getY(), Preferences.markersBounds, Preferences.markersBounds);
+//				}
+//			}
+//		}
+//			
+//		if(Preferences.drawFoodMarkers) {
+//			LinkedList<Marker> mtemp = (LinkedList<Marker>) Main.markers.fetch();
+//			g2d.setColor(Color.BLUE);
+//			for(Marker m : mtemp) {
+//				if(m.getType() == MarkerType.food) {
+//					g2d.fillOval((int) m.getX(), (int) m.getY(), Preferences.markersBounds, Preferences.markersBounds);
+//				}
+//			}
+//		}
+		
 		if(Preferences.drawHomeMarkers) {
-			LinkedList<Marker> mtemp = (LinkedList<Marker>) Markers.markers.clone();
 			g2d.setColor(Color.RED);
-			for(Marker m : mtemp) {
-				if(m.getType() == MarkerType.home) {
-					g2d.fillOval((int) m.getX(), (int) m.getY(), Preferences.markersBounds, Preferences.markersBounds);
+			LinkedHashMap<Integer, Path> paths = (LinkedHashMap<Integer, Path>) Ants.pm.getPaths(PathType.toHome).clone();
+			Set<Integer> keys = paths.keySet();
+			for(Integer p : keys) {
+				Path path = paths.get(p);
+				LinkedList<Marker> points = path.getPoints();
+				
+				for(Marker point : points) {
+					g2d.fillOval(point.getX(), point.getY(), Preferences.markersBounds, Preferences.markersBounds);
 				}
 			}
 		}
 			
 		if(Preferences.drawFoodMarkers) {
-			LinkedList<Marker> mtemp = (LinkedList<Marker>) Markers.markers.clone();
 			g2d.setColor(Color.BLUE);
-			for(Marker m : mtemp) {
-				if(m.getType() == MarkerType.food) {
-					g2d.fillOval((int) m.getX(), (int) m.getY(), Preferences.markersBounds, Preferences.markersBounds);
+			LinkedHashMap<Integer, Path> paths = (LinkedHashMap<Integer, Path>) Ants.pm.getPaths(PathType.toFood).clone();
+			Set<Integer> keys = paths.keySet();
+			for(Integer p : keys) {
+				Path path = paths.get(p);
+				LinkedList<Marker> points = path.getPoints();
+				
+				for(Marker point : points) {
+					g2d.fillOval(point.getX(), point.getY(), Preferences.markersBounds, Preferences.markersBounds);
 				}
 			}
 		}

@@ -15,6 +15,8 @@ public class Ants
 	
 	public static int count;
 	
+	public static PathManager pm = new PathManager();
+	
 	public Ants() {
 		
 	}
