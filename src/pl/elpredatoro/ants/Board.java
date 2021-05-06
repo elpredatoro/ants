@@ -96,7 +96,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		
 		if(Preferences.drawHomeMarkers) {
 			g2d.setColor(Color.RED);
-			LinkedHashMap<Integer, Path> paths = (LinkedHashMap<Integer, Path>) Ants.pm.getPaths(PathType.toHome).clone();
+			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toHome);
 			Set<Integer> keys = paths.keySet();
 			for(Integer p : keys) {
 				Path path = paths.get(p);
@@ -110,7 +110,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 			
 		if(Preferences.drawFoodMarkers) {
 			g2d.setColor(Color.BLUE);
-			LinkedHashMap<Integer, Path> paths = (LinkedHashMap<Integer, Path>) Ants.pm.getPaths(PathType.toFood).clone();
+			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toFood);
 			Set<Integer> keys = paths.keySet();
 			for(Integer p : keys) {
 				Path path = paths.get(p);

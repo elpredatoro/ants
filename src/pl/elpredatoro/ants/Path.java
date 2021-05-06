@@ -16,16 +16,8 @@ public class Path {
 		type = t;
 	}
 	
-	public void createFood(int x, int y) {
-		createMarker(x, y, MarkerType.food); //TODO wywalić type
-	}
-	
-	public void createHome(int x, int y) {
-		createMarker(x, y, MarkerType.home); //TODO wywalić type
-	}
-	
-	private void createMarker(int x, int y, MarkerType type) { //TODO wywalić type
-		Marker m = new Marker(x, y, type);
+	public void createMarker(int x, int y) {
+		Marker m = new Marker(x, y);
 		points.add(m);
 	}
 

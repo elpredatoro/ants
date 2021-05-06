@@ -42,7 +42,7 @@ public class PathManager {
 		Set<Integer> keys = pathsCopy.keySet();
 		for(Integer p : keys) {
 			Path path = pathsCopy.get(p);
-			if(path.getType() == type) {
+			if(path.getType() == type && path.isFinished()) {
 				foundPaths.put(p, path);
 			}
 		}
@@ -56,13 +56,13 @@ public class PathManager {
 	
 	public void addFoodMarker(Integer id, int x, int y) {
 		if(paths.containsKey(id)) {
-			paths.get(id).createFood(x, y);
+			paths.get(id).createMarker(x, y);
 		}
 	}
 	
 	public void addHomeMarker(Integer id, int x, int y) {
 		if(paths.containsKey(id)) {
-			paths.get(id).createHome(x, y);
+			paths.get(id).createMarker(x, y);
 		}
 	}
 	
