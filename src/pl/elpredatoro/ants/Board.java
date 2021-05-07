@@ -41,6 +41,8 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 	public void mouseReleased(MouseEvent e) {
 		lastx = 0;
 		lasty = 0;
+		
+		Food.parseImg();
 	}
 	
 	@Override
@@ -63,7 +65,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		Graphics g = Main.background.getGraphics();
 		Graphics2D g2d = (Graphics2D) g;
 		
-		g2d.setColor(Colors.wall);
+		g2d.setColor(Colors.food);
 		g2d.setStroke(new BasicStroke(10f));
 		g2d.drawLine(x1, y1, x2, y2);
 	}

@@ -82,7 +82,7 @@ public class PathManager {
 		Set<Integer> keys = paths.keySet();
 		for(Integer p : keys) {
 			Path path = paths.get(p);
-			if(path.isFinished() && path.getType() == t) {
+			if(path.isFinished() && !path.isObstacleInPath() && !path.isPathHasNoFood() && path.getType() == t) {
 				for(Marker point : path.getPoints()) {
 					Point temppoint = new Point(x, y);
 					double dist = temppoint.distance(point.getX(), point.getY());
@@ -98,7 +98,7 @@ public class PathManager {
 		Set<Integer> keyss = foundPaths.keySet();
 		if(foundPaths.size() > 0) {
 			for(Integer p : keyss) {
-				if(shortestPath == null || shortestPath.getPoints().size() > foundPaths.get(p).getPoints().size()) {
+				if(shortestPath == null || shortestPath.getPoints().size() >= foundPaths.get(p).getPoints().size()) {
 					shortestPath = foundPaths.get(p);
 					shortestPathId = p;
 				}

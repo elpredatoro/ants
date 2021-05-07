@@ -8,12 +8,16 @@ public class Path {
 	private boolean finished;
 	private PathType type;
 	private LinkedList<Marker> points;
+	private boolean obstacleInPath;
+	private boolean pathHasNoFood;
 	
 	public Path(PathType t) {
 		points = new LinkedList<Marker>();
 		setFinished(false);
 		lastUsed = new Date();
 		type = t;
+		setObstacleInPath(false);
+		setPathHasNoFood(false);
 	}
 	
 	public void createMarker(int x, int y) {
@@ -51,5 +55,21 @@ public class Path {
 
 	public void setType(PathType type) {
 		this.type = type;
+	}
+
+	public boolean isObstacleInPath() {
+		return obstacleInPath;
+	}
+
+	public void setObstacleInPath(boolean obstacleInPath) {
+		this.obstacleInPath = obstacleInPath;
+	}
+
+	public boolean isPathHasNoFood() {
+		return pathHasNoFood;
+	}
+
+	public void setPathHasNoFood(boolean pathHasNoFood) {
+		this.pathHasNoFood = pathHasNoFood;
 	}
 }

@@ -104,6 +104,17 @@ public class Ant
 		
 		if(mode == AntMode.seekFood) {
 			detectFood();
+			
+			if(fp != null) {
+				Path path = Ants.pm.getPath(fp.getId());
+				
+				if(path != null) {
+					Marker p = path.getPoints().getFirst();
+					if(!detectFoodAtXY(p.getX(), p.getY())) {
+						path.setPathHasNoFood(true);
+					}
+				}
+			}
 		}
 		
 		// kalkulacja nowych wspolrzednych
@@ -113,6 +124,19 @@ public class Ant
 		
 		x += x_diff;
 		y += y_diff;
+		
+		if(x < 0) {
+			x = 0;
+		}
+		if(y < 0) {
+			y = 0;
+		}
+		if(x > Main.background.getWidth()) {
+			x =  Main.background.getWidth();
+		}
+		if(y > Main.background.getHeight()) {
+			y = Main.background.getHeight();
+		}
 	}
 	
 	public void randomizeDirection() {
@@ -151,7 +175,7 @@ public class Ant
 			Integer index = Ants.pm.getIndexForPointInPath(pathId, (int)x, (int)y);
 			fp.setIndex(index);
 			
-			System.out.printf("\nPath found id=%s, index=%s", pathId, index);
+			System.out.printf("\nPath found id=%s, length=%s, index=%s", pathId, Ants.pm.getPath(pathId).getPoints().size(), index);
 		}
 	}
 	
@@ -198,6 +222,13 @@ public class Ant
 	
 	private void wallDetected(float x, float y) {
 		direction = changeAngle(direction);
+		
+		if(fp != null) {
+			Path path = Ants.pm.getPath(fp.getId());
+			if(path != null) {
+				path.setObstacleInPath(true);
+			}
+		}
 	}
 	
 	private void detectFood() {
@@ -217,6 +248,21 @@ public class Ant
 		if(nearest != null) {
 			foodDetected(nearest.getX(), nearest.getY());
 		}
+	}
+	
+	private boolean detectFoodAtXY(int x, int y) {
+		Food nearest = null;
+		for(Food f : Main.food) {
+			if(!f.isDeleted()) {
+				Point mp = new Point(x, y);
+				Point fp = new Point(f.getX(), f.getY());
+				if(mp.distance(fp) <= Preferences.foodDetectDistance) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	private void foodDetected(int x, int y) {
