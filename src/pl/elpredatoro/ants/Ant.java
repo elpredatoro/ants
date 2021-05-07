@@ -111,7 +111,7 @@ public class Ant
 				if(path != null) {
 					Marker p = path.getPoints().getFirst();
 					if(!detectFoodAtXY(p.getX(), p.getY())) {
-						path.setPathHasNoFood(true);
+						path.setPathNotUsable(true);
 					}
 				}
 			}
@@ -121,6 +121,27 @@ public class Ant
 		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
 		float x_diff = diff[0];
 		float y_diff = diff[1];
+		
+		if(MathHelper.randomMinMax(0, 10000) == 0 || isWall(x + x_diff, y + y_diff)) {
+			//direction = changeAngle(direction);
+			
+			if(fp != null) {
+				Path path = Ants.pm.getPath(fp.getId());
+				
+				if(path != null) {
+					path.setPathNotUsable(true);
+				}
+				
+				fp = null;
+			}
+			return;
+		}
+		
+		if(isWall(x, y)) {
+			x = Preferences.antHomeX;
+			y = Preferences.antHomeY;
+			return;
+		}
 		
 		x += x_diff;
 		y += y_diff;
@@ -172,16 +193,15 @@ public class Ant
 		if(pathId != null) {
 			fp = new FollowingPath(pathId);
 			
-			Integer index = Ants.pm.getIndexForPointInPath(pathId, (int)x, (int)y);
+			Integer index = Ants.pm.getNearestPointIndexInPath(pathId, (int)x, (int)y);
 			fp.setIndex(index);
 			
-			System.out.printf("\nPath found id=%s, length=%s, index=%s", pathId, Ants.pm.getPath(pathId).getPoints().size(), index);
+			//System.out.printf("\nPath found id=%s, length=%s, index=%s", pathId, Ants.pm.getPath(pathId).getPoints().size(), fp.getIndex());
 		}
 	}
 	
 	private void goToXY(int x, int y) {
 		direction = (int)Math.toDegrees(Math.atan2(y - this.y, x - this.x));
-		//System.out.printf("\nnew_dir=%s", direction);
 	}
 	
 	private boolean atXY(int x, int y) {
@@ -226,7 +246,7 @@ public class Ant
 		if(fp != null) {
 			Path path = Ants.pm.getPath(fp.getId());
 			if(path != null) {
-				path.setObstacleInPath(true);
+				path.setPathNotUsable(true);
 			}
 		}
 	}

@@ -82,7 +82,7 @@ public class PathManager {
 		Set<Integer> keys = paths.keySet();
 		for(Integer p : keys) {
 			Path path = paths.get(p);
-			if(path.isFinished() && !path.isObstacleInPath() && !path.isPathHasNoFood() && path.getType() == t) {
+			if(path.isFinished() && !path.isPathNotUsable() && path.getType() == t) {
 				for(Marker point : path.getPoints()) {
 					Point temppoint = new Point(x, y);
 					double dist = temppoint.distance(point.getX(), point.getY());
@@ -108,19 +108,27 @@ public class PathManager {
 		return shortestPathId;
 	}
 	
-	public Integer getIndexForPointInPath(Integer id, int x, int y) {
+	public Integer getNearestPointIndexInPath(Integer id, int x, int y) {
 		LinkedList<Marker> points = paths.get(id).getPoints();
 		
-		int index = 0;
+		Integer index = null;
+		Double lowestDist = null;
 		for(Marker p : points) {
-			if(p.getX() == x && p.getY() == y) {
-				return index;
-			}
+			Point target = new Point(p.getX(), p.getY());
+			Point source = new Point(x, y);
+			Double dist = source.distance(target);
 			
-			index++;
+			if(lowestDist == null || dist < lowestDist) {
+				lowestDist = dist;
+				index = points.indexOf(p);
+			}
 		}
 		
-		return paths.get(id).getPoints().size()-1;
+		if(index != null) {
+			return index;
+		}
+		
+		return points.indexOf(points.getLast());
 	}
 	
 	public void clearOld() {
@@ -130,7 +138,7 @@ public class PathManager {
 			ArrayList<Integer> toRemove = new ArrayList<Integer>();
 			for(Integer p : keys) {
 				Path path = paths.get(p);
-				if(path.isFinished() && path.getLastUsed().before(d)) {
+				if(path.isFinished() && (path.getLastUsed().before(d) || path.isPathNotUsable())) {
 					try {
 						paths.remove(p);
 					} catch(Exception e) {}
