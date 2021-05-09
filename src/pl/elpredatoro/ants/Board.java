@@ -92,7 +92,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		g2d.drawImage(Main.background, 0, 0, null);
 		
 		g2d.setColor(Color.RED);
-		g2d.fillOval(Preferences.antHomeX, Preferences.antHomeY, 10, 10);
+		g2d.drawOval((int) Preferences.antHomeX-(Preferences.homeBounds/2), (int) Preferences.antHomeY-(Preferences.homeBounds/2), Preferences.homeBounds, Preferences.homeBounds);
 		
 		if(Preferences.drawHomeMarkers) {
 			g2d.setColor(Color.RED);
@@ -103,7 +103,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				LinkedList<Marker> points = path.getPoints();
 				
 				for(Marker point : points) {
-					g2d.fillOval(point.getX(), point.getY(), Preferences.markersBounds, Preferences.markersBounds);
+					g2d.fillOval((int) point.getX(), (int) point.getY(), Preferences.markersBounds, Preferences.markersBounds);
 				}
 			}
 		}
@@ -117,7 +117,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				LinkedList<Marker> points = path.getPoints();
 				
 				for(Marker point : points) {
-					g2d.fillOval(point.getX(), point.getY(), Preferences.markersBounds, Preferences.markersBounds);
+					g2d.fillOval((int) point.getX(), (int) point.getY(), Preferences.markersBounds, Preferences.markersBounds);
 				}
 			}
 		}
@@ -125,7 +125,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		g2d.setColor(Color.BLACK);
 		for(int v = 0; v < Ants.count; v++) {
 			Ant ant = Ants.getAnt(v);
-			g2d.fillOval((int) ant.getX(), (int) ant.getY(), Preferences.antsBounds, Preferences.antsBounds);
+			g2d.fillOval((int) ant.getX()-(Preferences.antsBounds/2), (int) ant.getY()-(Preferences.antsBounds/2), Preferences.antsBounds, Preferences.antsBounds);
 		}
 		g2d.dispose();
 	}

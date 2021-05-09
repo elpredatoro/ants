@@ -44,8 +44,8 @@ public class Ant
 		if(atXY(Preferences.antHomeX, Preferences.antHomeY) && mode == AntMode.toHome) {
 			mode = AntMode.seekFood;
 			
-			Ants.pm.getPath(pathId).setFinished(true);
 			Ants.pm.getPath(pathId).setLastUsed(new Date());
+			Ants.pm.getPath(pathId).setFinished(true);
 			
 			pathId = -1;
 			
@@ -300,8 +300,8 @@ public class Ant
 					f.setDeleted(true);
 					mode = AntMode.toHome;
 					
-					Ants.pm.getPath(pathId).setFinished(true);
 					Ants.pm.getPath(pathId).setLastUsed(new Date());
+					Ants.pm.getPath(pathId).setFinished(true);
 					
 					pathId = -1;
 					

@@ -28,7 +28,7 @@ public class Main extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		setTitle("Ants test v0.2");
+		setTitle("Ants Simulator v0.5");
 		setResizable(false);
 		setVisible(true);
 		

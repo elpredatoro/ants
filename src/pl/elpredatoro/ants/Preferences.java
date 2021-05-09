@@ -19,6 +19,7 @@ public class Preferences {
 	public static int foodDetectDistance = 40;
 	public static int homeDetectDistance = 40;
 	
-	public static int antsBounds = 5;
+	public static int antsBounds = 4;
 	public static int markersBounds = 2;
+	public static int homeBounds = 10;
 }
