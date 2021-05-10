@@ -1,5 +1,7 @@
 package pl.elpredatoro.ants;
 
+import java.util.ArrayList;
+
 public class Ants
 {
 	// wielkosc
@@ -11,9 +13,9 @@ public class Ants
 	// maksymalna losowa zmiana kierunku
 	public static int max_dir_variation = 5;
 	
-	public static Ant[] ants;
+	public static ArrayList<Ant> ants = new ArrayList<Ant>();
 	
-	public static int count;
+	public static int count = 0;
 	
 	public static PathManager pm = new PathManager();
 	
@@ -22,15 +24,23 @@ public class Ants
 	}
 	
 	public void generate(int count) {
-		Ants.count = count;
-		ants = new Ant[Ants.count];
+		Ants.count += count;
 		
 		for(int v = 0; v < Ants.count; v++) {
-			ants[v] = new Ant();
+			ants.add(new Ant());
+		}
+	}
+	
+	public void remove(int count) {
+		Ants.count -= count;
+		
+		for(int v = 0; v < count; v++) {
+			//TODO remove path
+			ants.remove(0);
 		}
 	}
 	
 	public static Ant getAnt(int id) {
-		return Ants.ants[id];
+		return Ants.ants.get(id);
 	}
 }

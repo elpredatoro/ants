@@ -175,7 +175,13 @@ public class Ant
 	}
 	
 	private int changeAngle(int angle) {
-		int newdir = angle + 90;
+		int left = MathHelper.randomMinMax(0, 1);
+		int newdir = 0;
+		if(left == 1) {
+			newdir = angle - 90;
+		} else {
+			newdir = angle + 90;
+		}
 		
 		if(newdir < 0) {
 			newdir += 360;

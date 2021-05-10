@@ -28,7 +28,7 @@ public class Path {
 	}
 
 	public void setLastUsed(Date lastUsed) {
-		//this.lastUsed = lastUsed;
+		this.lastUsed = lastUsed;
 	}
 
 	public LinkedList<Marker> getPoints() {

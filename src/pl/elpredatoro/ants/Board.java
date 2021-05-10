@@ -20,6 +20,8 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addKeyListener(this);
+		
+		this.requestFocusInWindow();
 	}
 	
 	@Override
@@ -35,6 +37,8 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 	public void mousePressed(MouseEvent e) {
 		lastx = e.getX();
 		lasty = e.getY();
+		
+		this.requestFocusInWindow();
 	}
 
 	@Override
@@ -62,18 +66,30 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 	public void mouseMoved(MouseEvent e) {}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		System.out.printf("\n%s", e.getKeyChar());
-	}
+	public void keyPressed(KeyEvent e) {}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		System.out.printf("\n%s", e.getKeyChar());
-	}
+	public void keyReleased(KeyEvent e) {}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		System.out.printf("\n%s", e.getKeyChar());
+		char key = e.getKeyChar();
+		
+		// reset
+		if(key == 'r') {
+			Main.loadBackground();
+		}
+		
+		if(key == '+') {
+			Ants ants = Main.ants;
+			ants.generate(100);
+		}
+		
+		if(key == '-') {
+			Ants ants = Main.ants;
+			ants.remove(100);
+		}
 	}
 	
 	private void paintLine(int x1, int y1, int x2, int y2) {

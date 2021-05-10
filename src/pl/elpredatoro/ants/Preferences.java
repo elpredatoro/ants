@@ -9,8 +9,8 @@ public class Preferences {
 	public static int pathLastUseDecayTime = 60000;
 	public static int minMarkerDelay = 20;
 	
-	public static int antHomeX = 400;
-	public static int antHomeY = 300;
+	public static int antHomeX = 50;
+	public static int antHomeY = 50;
 	
 	public static boolean drawFoodMarkers = true;
 	public static boolean drawHomeMarkers = true;

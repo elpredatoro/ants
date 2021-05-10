@@ -32,6 +32,22 @@ public class Main extends JFrame {
 		setResizable(false);
 		setVisible(true);
 		
+		loadBackground();
+		
+		// tworzymy klase i generujemy
+		ants = new Ants();
+		//ants.generate(Preferences.antsCount);
+		
+		add(board = new Board());
+		
+		// timery
+		Timer antMove = new Timer();
+		antMove.schedule(new AntMoveTimer(), 1000, 10);
+		
+		this.revalidate();
+	}
+	
+	public static void loadBackground() {
 		try {
 			background = ImageIO.read(new FileInputStream("res/background.png"));
 			int w = background.getWidth();
@@ -48,18 +64,6 @@ public class Main extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// tworzymy klase i generujemy
-		ants = new Ants();
-		ants.generate(Preferences.antsCount);
-		
-		add(board = new Board());
-		
-		// timery
-		Timer antMove = new Timer();
-		antMove.schedule(new AntMoveTimer(), 1000, 10);
-		
-		this.revalidate();
 	}
 	
 	public static void main(String[] args) {
