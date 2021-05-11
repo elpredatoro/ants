@@ -3,8 +3,8 @@ package pl.elpredatoro.ants;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Timer;
 
 import javax.imageio.ImageIO;
@@ -17,7 +17,6 @@ public class Main extends JFrame {
 
 	public static Board board;
 	public static Ants ants;
-	public static ArrayList<Food> food = new ArrayList<Food>();
 	
 	public static BufferedImage background = null;
 	
@@ -38,6 +37,10 @@ public class Main extends JFrame {
 		ants = new Ants();
 		ants.generate(Preferences.antsCount);
 		
+		// parse food
+		FoodManager fm = Ants.fm;
+		fm.parseImg();
+		
 		add(board = new Board());
 		
 		// timery
@@ -50,16 +53,9 @@ public class Main extends JFrame {
 	public static void loadBackground() {
 		try {
 			background = ImageIO.read(new FileInputStream("res/background.png"));
-			int w = background.getWidth();
-			int h = background.getHeight();
-			
-			for(int x = 0; x < w; x++) {
-				for(int y = 0; y < h; y++) {
-					if(background.getRGB(x, y) == Colors.food.getRGB()) {
-						food.add(new Food(x, y));
-					}
-				}
-			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

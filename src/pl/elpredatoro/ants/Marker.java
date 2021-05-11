@@ -1,7 +1,5 @@
 package pl.elpredatoro.ants;
 
-import java.util.Date;
-
 public class Marker {
 	private int x;
 	private int y;

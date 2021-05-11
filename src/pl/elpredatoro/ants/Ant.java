@@ -2,14 +2,7 @@ package pl.elpredatoro.ants;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Ant
 {
@@ -264,7 +257,7 @@ public class Ant
 		//TODO za bardzo zamula
 		// trzeba podzielić na mniejsze obszary i tylko je przeszukiwać
 		
-		for(Food f : Main.food) {
+		for(Food f : Ants.fm.getFood()) {
 			if(atXY(f.getX(), f.getY(), Preferences.foodDetectDistance) && !f.isDeleted()) {
 				if(nearest == null) {
 					nearest = f;
@@ -287,7 +280,7 @@ public class Ant
 	
 	private boolean detectFoodAtXY(int x, int y) {
 		Food nearest = null;
-		for(Food f : Main.food) {
+		for(Food f : Ants.fm.getFood()) {
 			if(!f.isDeleted()) {
 				Point mp = new Point(x, y);
 				Point fp = new Point(f.getX(), f.getY());
@@ -309,7 +302,7 @@ public class Ant
 	}
 	
 	private void foodColected(float x, float y) {
-		for(Food f : Main.food) {
+		for(Food f : Ants.fm.getFood()) {
 			if(f.getX() == (int)x && f.getY() == (int)y) {
 				if(!f.isDeleted()) {
 					f.setDeleted(true);

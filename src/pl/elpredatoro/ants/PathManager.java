@@ -1,7 +1,6 @@
 package pl.elpredatoro.ants;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -135,7 +134,6 @@ public class PathManager {
 		try {
 			Set<Integer> keys = paths.keySet();
 			Date d = new Date(new Date().getTime() - Preferences.pathLastUseDecayTime);
-			ArrayList<Integer> toRemove = new ArrayList<Integer>();
 			for(Integer p : keys) {
 				Path path = paths.get(p);
 				if(path.isFinished() && (path.getLastUsed().before(d) || path.isPathNotUsable())) {
