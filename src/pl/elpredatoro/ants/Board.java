@@ -90,6 +90,11 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 			Ants ants = Main.ants;
 			ants.remove(100);
 		}
+		
+		if(key == 'p') {
+			Preferences.drawFoodMarkers = Preferences.drawFoodMarkers ? false : true;
+			Preferences.drawHomeMarkers = Preferences.drawHomeMarkers ? false : true;
+		}
 	}
 	
 	private void paintLine(int x1, int y1, int x2, int y2) {
