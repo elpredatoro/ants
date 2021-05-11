@@ -259,6 +259,11 @@ public class Ant
 	
 	private void detectFood() {
 		Food nearest = null;
+		//long start = System.nanoTime();
+		
+		//TODO za bardzo zamula
+		// trzeba podzielić na mniejsze obszary i tylko je przeszukiwać
+		
 		for(Food f : Main.food) {
 			if(atXY(f.getX(), f.getY(), Preferences.foodDetectDistance) && !f.isDeleted()) {
 				if(nearest == null) {
@@ -274,6 +279,10 @@ public class Ant
 		if(nearest != null) {
 			foodDetected(nearest.getX(), nearest.getY());
 		}
+		
+		//long end = System.nanoTime();
+		
+		//System.out.printf("\n%s ms", (end-start)/1000);
 	}
 	
 	private boolean detectFoodAtXY(int x, int y) {

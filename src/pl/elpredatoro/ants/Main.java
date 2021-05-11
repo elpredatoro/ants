@@ -36,7 +36,7 @@ public class Main extends JFrame {
 		
 		// tworzymy klase i generujemy
 		ants = new Ants();
-		//ants.generate(Preferences.antsCount);
+		ants.generate(Preferences.antsCount);
 		
 		add(board = new Board());
 		
