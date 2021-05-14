@@ -279,7 +279,6 @@ public class Ant
 	}
 	
 	private boolean detectFoodAtXY(int x, int y) {
-		Food nearest = null;
 		for(Food f : Ants.fm.getFood()) {
 			if(!f.isDeleted()) {
 				Point mp = new Point(x, y);
@@ -330,16 +329,6 @@ public class Ant
 		BufferedImage back = Main.background;
 		
 		if (back.getRGB((int)x, (int)y) == Colors.wall.getRGB()) {
-			return true;
-		}
-		
-		return false;
-	}
-	
-	private boolean isFood(float x, float y) {
-		BufferedImage back = Main.background;
-		
-		if (back.getRGB((int)x, (int)y) == Colors.food.getRGB()) {
 			return true;
 		}
 		
