@@ -115,6 +115,8 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		g2d.setColor(Color.RED);
 		g2d.drawOval((int) Preferences.antHomeX-(Preferences.homeBounds/2), (int) Preferences.antHomeY-(Preferences.homeBounds/2), Preferences.homeBounds, Preferences.homeBounds);
 		
+		// TODO przy dużej ilości markerów mocno zamula
+//		long start1 = System.currentTimeMillis();
 		if(Preferences.drawHomeMarkers) {
 			g2d.setColor(Color.RED);
 			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toHome);
@@ -128,7 +130,9 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				}
 			}
 		}
-			
+//		long end1 = System.currentTimeMillis();
+		
+//		long start2 = System.currentTimeMillis();
 		if(Preferences.drawFoodMarkers) {
 			g2d.setColor(Color.BLUE);
 			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toFood);
@@ -142,6 +146,9 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				}
 			}
 		}
+//		long end2 = System.currentTimeMillis();
+		
+//		System.out.println("home_markers="+(end1-start1)+"ms food_markers="+(end2-start2)+"ms");
 		
 		g2d.setColor(Color.BLACK);
 		for(int v = 0; v < Ants.count; v++) {
