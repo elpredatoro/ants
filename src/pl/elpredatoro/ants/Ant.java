@@ -252,12 +252,8 @@ public class Ant
 	
 	private void detectFood() {
 		Food nearest = null;
-		//long start = System.nanoTime();
-		
-		//TODO za bardzo zamula
-		// trzeba podzielić na mniejsze obszary i tylko je przeszukiwać
-		
-		for(Food f : Ants.fm.getFood()) {
+
+		for(Food f : Ants.fm.getFood(this.x, this.y)) {
 			if(atXY(f.getX(), f.getY(), Preferences.foodDetectDistance) && !f.isDeleted()) {
 				if(nearest == null) {
 					nearest = f;
@@ -272,14 +268,10 @@ public class Ant
 		if(nearest != null) {
 			foodDetected(nearest.getX(), nearest.getY());
 		}
-		
-		//long end = System.nanoTime();
-		
-		//System.out.printf("\n%s ms", (end-start)/1000);
 	}
 	
 	private boolean detectFoodAtXY(int x, int y) {
-		for(Food f : Ants.fm.getFood()) {
+		for(Food f : Ants.fm.getFood(x, y)) {
 			if(!f.isDeleted()) {
 				Point mp = new Point(x, y);
 				Point fp = new Point(f.getX(), f.getY());
@@ -301,7 +293,7 @@ public class Ant
 	}
 	
 	private void foodColected(float x, float y) {
-		for(Food f : Ants.fm.getFood()) {
+		for(Food f : Ants.fm.getFood(x, y)) {
 			if(f.getX() == (int)x && f.getY() == (int)y) {
 				if(!f.isDeleted()) {
 					f.setDeleted(true);
