@@ -12,6 +12,8 @@ public class FoodManager {
 	}
 	
 	public void parseImg() {
+		food = new HashMap<>();
+		
 		BufferedImage background = Main.background;
 		int w = background.getWidth();
 		int h = background.getHeight();

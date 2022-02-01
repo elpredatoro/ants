@@ -131,9 +131,13 @@ public class PathManager {
 	}
 	
 	public void clearOld() {
+		this.clearOld(Preferences.pathLastUseDecayTime);
+	}
+	
+	public void clearOld(int lastUsedTime) {
 		try {
 			Set<Integer> keys = paths.keySet();
-			Date d = new Date(new Date().getTime() - Preferences.pathLastUseDecayTime);
+			Date d = new Date(new Date().getTime() - lastUsedTime);
 			for(Integer p : keys) {
 				Path path = paths.get(p);
 				if(path.isFinished() && (path.getLastUsed().before(d) || path.isPathNotUsable())) {
@@ -145,5 +149,9 @@ public class PathManager {
 		} catch (ConcurrentModificationException e) {
 			//e.printStackTrace();
 		}
+	}
+	
+	public void clearAll() {
+		this.clearOld(0);
 	}
 }

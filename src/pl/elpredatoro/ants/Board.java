@@ -79,16 +79,23 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		// reset
 		if(key == 'r') {
 			Main.loadBackground();
+			Ants.fm.parseImg();
+		}
+		
+		if(key == 'c') {
+			Ants.pm.clearAll();
 		}
 		
 		if(key == '+') {
 			Ants ants = Main.ants;
 			ants.generate(100);
+			System.out.println("Current count "+ants.count);
 		}
 		
 		if(key == '-') {
 			Ants ants = Main.ants;
 			ants.remove(100);
+			System.out.println("Current count "+ants.count);
 		}
 		
 		if(key == 'p') {
