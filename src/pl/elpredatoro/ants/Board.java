@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
-import pl.elpredatoro.ants.DrawMode;
 
 import javax.swing.*;
 
@@ -122,7 +121,10 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 			if(drawMode == DrawMode.wall) {
 				drawMode = DrawMode.food;
 				System.out.println("Draw mode: food");
-			} else {
+			} else if(drawMode == DrawMode.food) {
+				drawMode = DrawMode.background;
+				System.out.println("Draw mode: background");
+			} else if(drawMode == DrawMode.background) {
 				drawMode = DrawMode.wall;
 				System.out.println("Draw mode: wall");
 			}
@@ -135,10 +137,21 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		Graphics g = Main.background.getGraphics();
 		Graphics2D g2d = (Graphics2D) g;
 		
-		// TODO: food not working
-		g2d.setColor(drawMode == DrawMode.wall ? Colors.wall : Colors.food);
+		switch(drawMode) {
+			case wall:
+				g2d.setColor(Colors.wall);
+				break;
+			case food:
+				g2d.setColor(Colors.food);
+				break;
+			case background:
+				g2d.setColor(Colors.background);
+				break;
+		}
 		g2d.setStroke(new BasicStroke(10f));
 		g2d.drawLine(x1, y1, x2, y2);
+
+		Ants.fm.parseImg();
 	}
 	
 	public void paintComponent(Graphics g) {
