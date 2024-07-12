@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
+import pl.elpredatoro.ants.DrawMode;
 
 import javax.swing.*;
 
@@ -14,6 +15,8 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 	
 	private int lastx = 0;
 	private int lasty = 0;
+
+	private DrawMode drawMode = DrawMode.food;
 	
 	public Board() {
 		super();
@@ -46,7 +49,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		lastx = 0;
 		lasty = 0;
 		
-		//Food.parseImg();
+		// Food.parseImg();
 	}
 	
 	@Override
@@ -73,42 +76,67 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.printf("\n%s", e.getKeyChar());
 		char key = e.getKeyChar();
+		System.out.printf("\n%s\n", key);
 		
 		// reset
 		if(key == 'r') {
 			Main.loadBackground();
 			Ants.fm.parseImg();
+			System.out.println("Reset background");
 		}
 		
+		if(key == 'f') {
+			Ants.pm.clearAllFoodPaths();
+			System.out.println("Clear all paths to food");
+		}
+
+		if(key == 'h') {
+			Ants.pm.clearAllHomePaths();
+			System.out.println("Clear all paths to home");
+		}
+
 		if(key == 'c') {
-			Ants.pm.clearAll();
+			Ants.pm.clearAllPaths();
+			System.out.println("Clear all paths");
 		}
 		
 		if(key == '+') {
 			Ants ants = Main.ants;
 			ants.generate(100);
-			System.out.println("Current count "+ants.count);
+			System.out.println("Current count "+Ants.count);
 		}
 		
 		if(key == '-') {
 			Ants ants = Main.ants;
 			ants.remove(100);
-			System.out.println("Current count "+ants.count);
+			System.out.println("Current count "+Ants.count);
 		}
 		
 		if(key == 'p') {
 			Preferences.drawFoodMarkers = Preferences.drawFoodMarkers ? false : true;
 			Preferences.drawHomeMarkers = Preferences.drawHomeMarkers ? false : true;
 		}
+
+		if(key == 'd') {
+			if(drawMode == DrawMode.wall) {
+				drawMode = DrawMode.food;
+				System.out.println("Draw mode: food");
+			} else {
+				drawMode = DrawMode.wall;
+				System.out.println("Draw mode: wall");
+			}
+		}
+
+
 	}
 	
 	private void paintLine(int x1, int y1, int x2, int y2) {
 		Graphics g = Main.background.getGraphics();
 		Graphics2D g2d = (Graphics2D) g;
 		
-		g2d.setColor(Colors.wall);
+		// TODO: food not working
+		g2d.setColor(drawMode == DrawMode.wall ? Colors.wall : Colors.food);
 		g2d.setStroke(new BasicStroke(10f));
 		g2d.drawLine(x1, y1, x2, y2);
 	}

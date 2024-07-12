@@ -151,7 +151,31 @@ public class PathManager {
 		}
 	}
 	
-	public void clearAll() {
-		this.clearOld(0);
+	public void clearAllFoodPaths() {
+		Set<Integer> keys = paths.keySet();
+		for(Integer p : keys) {
+			Path path = paths.get(p);
+			if(path.getType() == PathType.toFood) {
+				path.setPathNotUsable(true);
+			}
+		}
+	}
+
+	public void clearAllHomePaths() {
+		Set<Integer> keys = paths.keySet();
+		for(Integer p : keys) {
+			Path path = paths.get(p);
+			if(path.getType() == PathType.toHome) {
+				path.setPathNotUsable(true);
+			}
+		}
+	}
+
+	public void clearAllPaths() {
+		Set<Integer> keys = paths.keySet();
+		for(Integer p : keys) {
+			Path path = paths.get(p);
+			path.setPathNotUsable(true);
+		}
 	}
 }
