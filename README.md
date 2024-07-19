@@ -6,5 +6,11 @@ Ants leave markers as they move, markers leading to home and markers leading to 
 
 ## TODO
 
-- Sometimes ants stuck in walls
+- Detect walls and turn
+- More random path picking
 - Optimize path drawing
+- Add Neural Networks to ants ;)
+
+## BUGS
+
+- Sometimes ants stuck in walls
