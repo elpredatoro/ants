@@ -10,19 +10,16 @@ public class AntMoveTimer extends TimerTask {
 
 	@Override
 	public void run() {
-		Board b = Main.board;
-		
 		Ants.pm.clearOld();
 		
-		b.repaint();
-		
+		long start1 = System.currentTimeMillis();
 		for(int v = 0; v < Ants.count; v++) {
 			Ant ant = Ants.getAnt(v);
 			ant.move();
 			
 			ant.createMarker();
 		}
-		
-		b.repaint();
+		long end1 = System.currentTimeMillis();
+		// System.out.println("ants_move="+(end1-start1)+"ms");
 	}
 }

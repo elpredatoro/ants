@@ -8,12 +8,14 @@ import java.util.Set;
 
 import javax.swing.*;
 
-public class Board extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
+public class Board extends JComponent implements MouseListener, MouseMotionListener, KeyListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
 	private int lastx = 0;
 	private int lasty = 0;
+
+	private Timer timer = new Timer(50, this);
 
 	private DrawMode drawMode = DrawMode.food;
 	
@@ -24,6 +26,8 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		this.addKeyListener(this);
 		
 		this.requestFocusInWindow();
+
+		timer.start();
 	}
 	
 	@Override
@@ -154,9 +158,9 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		Ants.fm.parseImg();
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		super.paintComponent(g2d);
+		super.paint(g2d);
 		
 		g2d.drawImage(Main.background, 0, 0, null);
 		
@@ -164,7 +168,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		g2d.drawOval((int) Preferences.antHomeX-(Preferences.homeBounds/2), (int) Preferences.antHomeY-(Preferences.homeBounds/2), Preferences.homeBounds, Preferences.homeBounds);
 		
 		// TODO przy dużej ilości markerów mocno zamula
-//		long start1 = System.currentTimeMillis();
+		long start1 = System.currentTimeMillis();
 		if(Preferences.drawHomeMarkers) {
 			g2d.setColor(Color.RED);
 			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toHome);
@@ -178,9 +182,9 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				}
 			}
 		}
-//		long end1 = System.currentTimeMillis();
+		long end1 = System.currentTimeMillis();
 		
-//		long start2 = System.currentTimeMillis();
+		long start2 = System.currentTimeMillis();
 		if(Preferences.drawFoodMarkers) {
 			g2d.setColor(Color.BLUE);
 			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toFood);
@@ -194,15 +198,21 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				}
 			}
 		}
-//		long end2 = System.currentTimeMillis();
+		long end2 = System.currentTimeMillis();
 		
-//		System.out.println("home_markers="+(end1-start1)+"ms food_markers="+(end2-start2)+"ms");
-		
+		long start3 = System.currentTimeMillis();
 		g2d.setColor(Color.BLACK);
 		for(int v = 0; v < Ants.count; v++) {
 			Ant ant = Ants.getAnt(v);
 			g2d.fillOval((int) ant.getX()-(Preferences.antsBounds/2), (int) ant.getY()-(Preferences.antsBounds/2), Preferences.antsBounds, Preferences.antsBounds);
 		}
+		long end3 = System.currentTimeMillis();
+		// System.out.println("home_markers="+(end1-start1)+"ms food_markers="+(end2-start2)+"ms ants="+(end3-start3)+"ms");
 		g2d.dispose();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		repaint();
 	}
 }

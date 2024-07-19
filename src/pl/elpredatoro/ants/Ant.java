@@ -289,6 +289,8 @@ public class Ant
 			mode = AntMode.foodFound;
 			foodx = x;
 			foody = y;
+			// if food detected while following path, stop following path
+			fp = null;
 		}
 	}
 	
