@@ -5,6 +5,10 @@ public class MathHelper {
 		return (min + (int)(Math.random() * ((max - min) + 1)));
 	}
 	
+	public static float randomMinMax(float min, float max) {
+		return (min + (float)(Math.random() * ((max - min))));
+	}
+	
 	public static float[] calculateNewXYDiff(float speed, float direction) {
 		float newx = (float) Math.cos(Math.toRadians(direction)) * speed;
 		float newy = (float) Math.sin(Math.toRadians(direction)) * speed;

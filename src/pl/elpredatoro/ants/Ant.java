@@ -9,6 +9,7 @@ public class Ant
 	private int direction;
 	private float x;
 	private float y;
+	private float speed;
 	
 	private int pathId = -1;
 	
@@ -22,6 +23,7 @@ public class Ant
 	public Ant() {
 		x = Preferences.antHomeX;
 		y = Preferences.antHomeY;
+		speed = MathHelper.randomMinMax(Preferences.antMinSpeed, Preferences.antmaxSpeed);
 		direction = MathHelper.randomMinMax(0, 359);
 	}
 	
@@ -34,6 +36,7 @@ public class Ant
 			}
 		}
 		
+		// if ant is at home and mode is toHome, change mode to seekFood
 		if(atXY(Preferences.antHomeX, Preferences.antHomeY) && mode == AntMode.toHome) {
 			mode = AntMode.seekFood;
 			
@@ -41,7 +44,6 @@ public class Ant
 			Ants.pm.getPath(pathId).setFinished(true);
 			
 			pathId = -1;
-			
 			fp = null;
 			
 			direction = MathHelper.randomMinMax(0, 359);
@@ -111,7 +113,7 @@ public class Ant
 		}
 		
 		// kalkulacja nowych wspolrzednych
-		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
+		float[] diff = MathHelper.calculateNewXYDiff(speed, direction);
 		float x_diff = diff[0];
 		float y_diff = diff[1];
 		
@@ -185,15 +187,33 @@ public class Ant
 		
 		return newdir;
 	}
+
+	private int calculateNewAngle(int angle, int diff) {
+		int newdir = angle + diff;
+		
+		if(newdir < 0) {
+			newdir += 360;
+		}
+		if(newdir >= 360) {
+			newdir -= 360;
+		}
+		
+		return newdir;
+	}
 	
 	private void seekPath(PathType type) {
 		Integer pathId = Ants.pm.findPathContainingPoint((int)x, (int)y, type);
 		
 		if(pathId != null) {
-			fp = new FollowingPath(pathId);
+			Point p = Ants.pm.getNearestPointInPath(pathId, (int)x, (int)y);
+			Integer index = Ants.pm.getPointIndex(pathId, p);
 			
-			Integer index = Ants.pm.getNearestPointIndexInPath(pathId, (int)x, (int)y);
-			fp.setIndex(index);
+			if(!detectObstaclesTo((int)p.getX(), (int)p.getY())) {
+				fp = new FollowingPath(pathId);
+				fp.setIndex(index);
+			} else {
+				fp = null;
+			}
 			
 			//System.out.printf("\nPath found id=%s, length=%s, index=%s", pathId, Ants.pm.getPath(pathId).getPoints().size(), fp.getIndex());
 		}
@@ -201,6 +221,10 @@ public class Ant
 	
 	private void goToXY(int x, int y) {
 		direction = (int)Math.toDegrees(Math.atan2(y - this.y, x - this.x));
+	}
+
+	private int getDirectionToXY(int x, int y) {
+		return (int)Math.toDegrees(Math.atan2(y - this.y, x - this.x));
 	}
 	
 	private boolean atXY(int x, int y) {
@@ -226,21 +250,67 @@ public class Ant
 	}
 	
 	private void detectObstacles(float x, float y, int direction) {
-		float x_diff = x;
-		float y_diff = y;
-		float[] diff = MathHelper.calculateNewXYDiff(Ants.speed, direction);
-		for(int c = 1; c <= 5; c++) {
-			x_diff += diff[0];
-			y_diff += diff[1];
+		float x_diff_f = x;
+		float y_diff_f = y;
+		float x_diff_l = x;
+		float y_diff_l = y;
+		float x_diff_r = x;
+		float y_diff_r = y;
+		float[] diff_f = MathHelper.calculateNewXYDiff(speed, direction);
+		float[] diff_l = MathHelper.calculateNewXYDiff(speed, calculateNewAngle(direction, -45));
+		float[] diff_r = MathHelper.calculateNewXYDiff(speed, calculateNewAngle(direction, 45));
+		
+		for(int c = 1; c <= 10; c++) {
+			x_diff_f += diff_f[0];
+			y_diff_f += diff_f[1];
+			x_diff_l += diff_l[0];
+			y_diff_l += diff_l[1];
+			x_diff_r += diff_r[0];
+			y_diff_r += diff_r[1];
 			
-			if(isWall(x_diff, y_diff)) {
-				wallDetected(x_diff, y_diff);
+			try {
+				if (isWall(x_diff_f, y_diff_f)) {
+					int newDirection = calculateNewAngle(direction, 180);
+					wallDetected(newDirection);
+				}
+				if (isWall(x_diff_l, y_diff_l)) {
+					int newDirection = calculateNewAngle(direction, 90);
+					wallDetected(newDirection);
+				}
+				if (isWall(x_diff_r, y_diff_r)) {
+					int newDirection = calculateNewAngle(direction, -90);
+					wallDetected(newDirection);
+				}
+			} catch (Exception e) {
+				System.out.println("Error");
 			}
 		}
 	}
+
+	private boolean detectObstaclesTo(float x, float y) {
+		int direction = getDirectionToXY((int)x, (int)y);
+		float x_diff_f = this.x;
+		float y_diff_f = this.y;
+		float[] diff_f = MathHelper.calculateNewXYDiff(speed, direction);
+		
+		for (int c = 1; c <= Preferences.pathDetectDistance; c++) {
+			try {
+				x_diff_f += diff_f[0];
+				y_diff_f += diff_f[1];
+
+				if (isWall(x_diff_f, y_diff_f)) {
+					return true;
+				}
+			} catch (Exception e) {
+				System.out.println("Error");
+			}
+		}
+
+		return false;
+	}
 	
-	private void wallDetected(float x, float y) {
-		direction = changeAngle(direction);
+	private void wallDetected(int newDirection) {
+		direction = newDirection;
 		
 		if(fp != null) {
 			Path path = Ants.pm.getPath(fp.getId());

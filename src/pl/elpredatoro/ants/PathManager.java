@@ -129,6 +129,40 @@ public class PathManager {
 		
 		return points.indexOf(points.getLast());
 	}
+
+	public Point getNearestPointInPath(Integer id, int x, int y) {
+		LinkedList<Marker> points = paths.get(id).getPoints();
+		
+		Point point = null;
+		Double lowestDist = null;
+		for(Marker p : points) {
+			Point target = new Point(p.getX(), p.getY());
+			Point source = new Point(x, y);
+			Double dist = source.distance(target);
+			
+			if(lowestDist == null || dist < lowestDist) {
+				lowestDist = dist;
+				point = target;
+			}
+		}
+		
+		if(point != null) {
+			return point;
+		}
+		
+		return point;
+	}
+
+	public int getPointIndex(int pathId, Point p) {
+		LinkedList<Marker> points = paths.get(pathId).getPoints();
+		for(Marker m : points) {
+			if(m.getX() == p.x && m.getY() == p.y) {
+				return points.indexOf(m);
+			}
+		}
+
+		return -1;
+	}
 	
 	public void clearOld() {
 		this.clearOld(Preferences.pathLastUseDecayTime);

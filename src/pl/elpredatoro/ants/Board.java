@@ -167,8 +167,6 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 		g2d.setColor(Color.RED);
 		g2d.drawOval((int) Preferences.antHomeX-(Preferences.homeBounds/2), (int) Preferences.antHomeY-(Preferences.homeBounds/2), Preferences.homeBounds, Preferences.homeBounds);
 		
-		// TODO przy dużej ilości markerów mocno zamula
-		long start1 = System.currentTimeMillis();
 		if(Preferences.drawHomeMarkers) {
 			g2d.setColor(Color.RED);
 			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toHome);
@@ -178,13 +176,11 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				LinkedList<Marker> points = path.getPoints();
 				
 				for(Marker point : points) {
-					g2d.fillOval((int) point.getX(), (int) point.getY(), Preferences.markersBounds, Preferences.markersBounds);
+					g2d.drawOval((int) point.getX(), (int) point.getY(), Preferences.markersBounds, Preferences.markersBounds);
 				}
 			}
 		}
-		long end1 = System.currentTimeMillis();
 		
-		long start2 = System.currentTimeMillis();
 		if(Preferences.drawFoodMarkers) {
 			g2d.setColor(Color.BLUE);
 			LinkedHashMap<Integer, Path> paths = Ants.pm.getPaths(PathType.toFood);
@@ -194,20 +190,17 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 				LinkedList<Marker> points = path.getPoints();
 				
 				for(Marker point : points) {
-					g2d.fillOval((int) point.getX(), (int) point.getY(), Preferences.markersBounds, Preferences.markersBounds);
+					g2d.drawOval((int) point.getX(), (int) point.getY(), Preferences.markersBounds, Preferences.markersBounds);
 				}
 			}
 		}
-		long end2 = System.currentTimeMillis();
 		
-		long start3 = System.currentTimeMillis();
 		g2d.setColor(Color.BLACK);
 		for(int v = 0; v < Ants.count; v++) {
 			Ant ant = Ants.getAnt(v);
-			g2d.fillOval((int) ant.getX()-(Preferences.antsBounds/2), (int) ant.getY()-(Preferences.antsBounds/2), Preferences.antsBounds, Preferences.antsBounds);
+			g2d.drawOval((int) ant.getX()-(Preferences.antsBounds/2), (int) ant.getY()-(Preferences.antsBounds/2), Preferences.antsBounds, Preferences.antsBounds);
 		}
-		long end3 = System.currentTimeMillis();
-		// System.out.println("home_markers="+(end1-start1)+"ms food_markers="+(end2-start2)+"ms ants="+(end3-start3)+"ms");
+		
 		g2d.dispose();
 	}
 
